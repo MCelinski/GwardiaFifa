@@ -15,6 +15,7 @@ const navItems = [
   { href: "/predictions/knockout", label: "Knockout" },
   { href: "/leaderboard", label: "Tabela" },
   { href: "/friends", label: "Typy znajomych" },
+  { href: "/rules", label: "Regulamin" },
   { href: "/admin", label: "Admin" }
 ];
 

@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { groupMatches, groups, knockoutMatches, league } from "@/lib/mock-data";
 import { isAuthorizedAdminRequest } from "@/lib/backend/admin-auth";
 import { canUseSupabaseAdmin, createAdminClient } from "@/lib/supabase/server";
+import { GROUP_STANDINGS_DEADLINE_ISO } from "@/lib/rules";
 
 export async function POST(request: NextRequest) {
   if (!isAuthorizedAdminRequest(request)) {
@@ -24,7 +25,7 @@ export async function POST(request: NextRequest) {
 
   const groupRows = groups.map((group, index) => ({
     code: group.group,
-    standings_deadline: new Date(2026, 5, 12 + index, 17, 0, 0).toISOString(),
+    standings_deadline: GROUP_STANDINGS_DEADLINE_ISO,
     status: group.status === "draft" ? "editable" : group.status === "live" ? "locked" : group.status
   }));
 

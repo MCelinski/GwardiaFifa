@@ -20,7 +20,7 @@ export default function GroupMatchesPage() {
   return (
     <AppShell>
       <div className="space-y-5">
-        <Header title="Group-stage match predictions" detail="All group-stage fixtures grouped by date and group. Each match locks when it starts." />
+        <Header title="Group-stage match predictions" detail="All group-stage fixtures grouped by date and group. Each match locks 10 minutes before kickoff." />
 
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="flex flex-wrap gap-2">
@@ -53,7 +53,7 @@ export default function GroupMatchesPage() {
 
         <Card>
           <CardContent className="flex flex-wrap items-center justify-between gap-3 p-5">
-            <p className="text-sm text-muted-foreground">After lock, friends predictions are available for that match.</p>
+            <p className="text-sm text-muted-foreground">Friends predictions become visible after kickoff. Editing locks 10 minutes before kickoff.</p>
             <FriendsPredictionsModal locked label="Open locked match predictions" />
           </CardContent>
         </Card>

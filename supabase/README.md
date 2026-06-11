@@ -35,5 +35,6 @@ RLS enforces:
 - users can always see their own predictions;
 - match predictions by friends become visible only when `fixtures.starts_at <= now()`;
 - group standings predictions by friends become visible only when `world_cup_groups.standings_deadline <= now()`;
-- users can create/update predictions only before the lock timestamp;
+- users can create/update match predictions only until 10 minutes before kickoff;
+- users can create/update group standings until `2026-06-11 23:59:59 Europe/Warsaw`;
 - admin operations require the server-side secret key.

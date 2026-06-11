@@ -6,6 +6,7 @@ import {
   Shield,
   Trophy
 } from "lucide-react";
+import { GROUP_STANDINGS_DEADLINE_LABEL } from "@/lib/rules";
 
 export type PredictionStatus =
   | "draft"
@@ -185,8 +186,8 @@ const flags = [
 
 export const groups: GroupStandingPrediction[] = groupNames.map((group, groupIndex) => ({
   group,
-  status: groupIndex < 2 ? "locked" : groupIndex < 5 ? "saved" : groupIndex < 8 ? "draft" : "scored",
-  deadline: `2026-06-${String(12 + groupIndex).padStart(2, "0")} 17:00`,
+  status: groupIndex < 5 ? "saved" : "draft",
+  deadline: GROUP_STANDINGS_DEADLINE_LABEL,
   teams: teamNames[groupIndex].map((name, teamIndex) => ({
     id: `${group}-${teamIndex + 1}`,
     name,
@@ -216,7 +217,7 @@ export const groupMatches: Match[] = groups.flatMap((group, groupIndex) => {
       id: `gm-${group.group}-${matchIndex + 1}`,
       group: group.group,
       date: `2026-06-${String(11 + Math.floor(sequence / 3)).padStart(2, "0")} ${matchIndex % 2 ? "21:00" : "18:00"}`,
-      deadline: `2026-06-${String(11 + Math.floor(sequence / 3)).padStart(2, "0")} ${matchIndex % 2 ? "20:45" : "17:45"}`,
+      deadline: `2026-06-${String(11 + Math.floor(sequence / 3)).padStart(2, "0")} ${matchIndex % 2 ? "20:50" : "17:50"}`,
       teamA: teamA.name,
       teamB: teamB.name,
       flagA: teamA.flag,
@@ -293,7 +294,7 @@ export const dashboardStats = [
   { label: "Group match points", value: "68", detail: "48 fixtures tracked", icon: CircleDot },
   { label: "Group standings points", value: "30", detail: "12 groups", icon: Shield },
   { label: "Knockout points", value: "34", detail: "Bracket draft live", icon: Medal },
-  { label: "Next prediction deadline", value: "17:45", detail: "USA vs Germany", icon: Beer }
+  { label: "Next prediction deadline", value: "17:50", detail: "10 min before USA vs Germany", icon: Beer }
 ];
 
 export const adminLogs = [

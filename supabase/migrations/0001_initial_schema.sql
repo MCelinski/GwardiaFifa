@@ -433,7 +433,7 @@ with check (
     select 1
     from public.fixtures f
     where f.id = fixture_id
-      and f.starts_at > now()
+      and f.starts_at - interval '10 minutes' > now()
       and public.is_league_member(f.league_id)
   )
 );
@@ -443,11 +443,11 @@ on public.match_predictions for update
 to authenticated
 using (
   user_id = auth.uid()
-  and exists (select 1 from public.fixtures f where f.id = fixture_id and f.starts_at > now())
+  and exists (select 1 from public.fixtures f where f.id = fixture_id and f.starts_at - interval '10 minutes' > now())
 )
 with check (
   user_id = auth.uid()
-  and exists (select 1 from public.fixtures f where f.id = fixture_id and f.starts_at > now())
+  and exists (select 1 from public.fixtures f where f.id = fixture_id and f.starts_at - interval '10 minutes' > now())
 );
 
 create policy "own group predictions visible before deadline, friends after deadline"
@@ -547,6 +547,6 @@ values ('Gwardia Piwo', 'GWARDIA-PIWO-2026')
 on conflict (invite_code) do nothing;
 
 insert into public.world_cup_groups (code, standings_deadline, status)
-select chr(65 + i), make_timestamptz(2026, 6, 12 + i, 17, 0, 0, 'Europe/Warsaw'), 'editable'
+select chr(65 + i), make_timestamptz(2026, 6, 11, 23, 59, 59, 'Europe/Warsaw'), 'editable'
 from generate_series(0, 11) as s(i)
 on conflict (code) do nothing;

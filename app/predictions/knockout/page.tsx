@@ -33,7 +33,7 @@ export default function KnockoutPage() {
         <Card>
           <CardContent className="flex flex-wrap items-center justify-between gap-3 p-5">
             <p className="text-sm text-muted-foreground">
-              Each knockout prediction locks when the match starts. Friends predictions unlock after lock.
+              Each knockout prediction locks 10 minutes before kickoff. Friends predictions unlock after kickoff.
             </p>
             <FriendsPredictionsModal locked={false} label="Preview hidden friends state" />
           </CardContent>

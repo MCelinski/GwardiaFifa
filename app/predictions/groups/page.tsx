@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { groups } from "@/lib/mock-data";
+import { GROUP_STANDINGS_DEADLINE_LABEL } from "@/lib/rules";
 
 export default function GroupStandingsPage() {
   return (
@@ -29,7 +30,7 @@ export default function GroupStandingsPage() {
           </div>
         </div>
 
-        <DeadlineBanner>Typy końcowych tabel grup zostaną ukryte przed innymi do momentu deadline&apos;u.</DeadlineBanner>
+        <DeadlineBanner>Typy końcowych tabel grup można ustawić do {GROUP_STANDINGS_DEADLINE_LABEL}. Do tego momentu są ukryte przed innymi.</DeadlineBanner>
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {groups.map((group) => (

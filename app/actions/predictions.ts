@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { MATCH_LOCK_MINUTES } from "@/lib/rules";
 
 const scoreSchema = z.object({
   fixtureId: z.string().uuid(),
@@ -33,8 +34,9 @@ export async function saveMatchPredictionAction(input: z.input<typeof scoreSchem
     .single();
 
   if (fixtureError) throw fixtureError;
-  if (new Date(fixture.starts_at) <= new Date()) {
-    throw new Error("Prediction is locked because the match already started.");
+  const lockAt = new Date(new Date(fixture.starts_at).getTime() - MATCH_LOCK_MINUTES * 60 * 1000);
+  if (lockAt <= new Date()) {
+    throw new Error(`Prediction is locked ${MATCH_LOCK_MINUTES} minutes before match start.`);
   }
 
   const { error } = await supabase.from("match_predictions").upsert(

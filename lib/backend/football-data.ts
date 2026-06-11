@@ -51,6 +51,10 @@ export type FootballDataSyncResult = {
 export const WORLD_CUP_2026_DATE_FROM = "2026-06-11";
 export const WORLD_CUP_2026_DATE_TO = "2026-07-19";
 
+// How long to keep rows in sync_logs. Old entries are pruned on every sync so a
+// frequent cron does not accumulate log rows without bound.
+const SYNC_LOG_RETENTION_DAYS = 7;
+
 const statusMap: Record<FootballDataMatch["status"], "scheduled" | "live" | "finished" | "locked"> = {
   SCHEDULED: "scheduled",
   TIMED: "scheduled",
@@ -198,6 +202,12 @@ export async function syncFootballDataMatches(options: { dateFrom?: string; date
     detail: `Fetched ${result.fetched} matches, upserted ${result.upserted}, recalculated ${result.recalculated}.`,
     meta: result
   });
+
+  // Keep the sync history bounded. A frequent cron (e.g. every 5 minutes) writes
+  // two log rows per run, so without pruning sync_logs would grow without limit.
+  // We retain the last SYNC_LOG_RETENTION_DAYS days and drop anything older.
+  const cutoff = new Date(Date.now() - SYNC_LOG_RETENTION_DAYS * 24 * 60 * 60 * 1000).toISOString();
+  await supabase.from("sync_logs").delete().lt("created_at", cutoff);
 
   return result;
 }

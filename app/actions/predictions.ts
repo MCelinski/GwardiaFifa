@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { MATCH_LOCK_MINUTES } from "@/lib/rules";
@@ -55,6 +56,16 @@ export async function saveMatchPredictionAction(input: z.input<typeof scoreSchem
   revalidatePath("/predictions/group-matches");
   revalidatePath("/predictions/knockout");
   revalidatePath("/dashboard");
+}
+
+export async function saveMatchPredictionFormAction(formData: FormData) {
+  await saveMatchPredictionAction({
+    fixtureId: String(formData.get("fixtureId") ?? ""),
+    scoreA: String(formData.get("scoreA") ?? ""),
+    scoreB: String(formData.get("scoreB") ?? "")
+  });
+
+  redirect("/dashboard");
 }
 
 export async function saveGroupStandingPredictionAction(input: z.input<typeof groupSchema>) {

@@ -5,7 +5,7 @@ import { canUseSupabaseAdmin, createAdminClient } from "@/lib/supabase/server";
 import { GROUP_STANDINGS_DEADLINE_ISO } from "@/lib/rules";
 
 export async function POST(request: NextRequest) {
-  if (!isAuthorizedAdminRequest(request)) {
+  if (!(await isAuthorizedAdminRequest(request))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

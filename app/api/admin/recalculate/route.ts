@@ -4,7 +4,7 @@ import { isAuthorizedAdminRequest } from "@/lib/backend/admin-auth";
 import { canUseSupabaseAdmin, createAdminClient } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
-  if (!isAuthorizedAdminRequest(request)) {
+  if (!(await isAuthorizedAdminRequest(request))) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 

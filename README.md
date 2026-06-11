@@ -12,6 +12,8 @@ The app has a complete premium dashboard UI and a backend foundation ready for S
 - SQL schema with RLS privacy rules;
 - server actions for login/register/join league and saving predictions;
 - admin API routes for mock import, sync placeholder, and point recalculation;
+- real football-data.org sync endpoint wired for Vercel Cron;
+- dashboard panel with today's matches that the current user can still predict;
 - mock fallback when Supabase env vars are not configured.
 
 ## Rules
@@ -34,6 +36,8 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=
 SUPABASE_SECRET_KEY=
 CRON_SECRET=
 FOOTBALL_DATA_API_KEY=
+FOOTBALL_DATA_COMPETITION=WC
+FOOTBALL_DATA_SEASON=2026
 ```
 
 4. Start the app:
@@ -66,3 +70,5 @@ The database enforces lock rules with RLS:
 - Enable email/password auth in Supabase.
 - Set Vercel environment variable `CRON_SECRET`.
 - Replace `/api/admin/sync-results` placeholder with real football-data.org fetch once the API key and competition IDs are confirmed.
+- Vercel Cron runs `GET /api/cron/football-data` every 15 minutes, configured in `vercel.json`.
+- football-data.org sync calls `/v4/competitions/{competition}/matches?season=2026&dateFrom=today&dateTo=today`.

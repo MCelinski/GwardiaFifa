@@ -10,6 +10,8 @@ NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...
 SUPABASE_SECRET_KEY=...
 CRON_SECRET=choose-a-long-random-secret
 FOOTBALL_DATA_API_KEY=optional-for-later
+FOOTBALL_DATA_COMPETITION=WC
+FOOTBALL_DATA_SEASON=2026
 ```
 
 4. Start the app and import the mock World Cup data into Supabase:
@@ -24,7 +26,8 @@ If `CRON_SECRET` is not set, admin API routes are allowed only in non-production
 
 - `POST /api/admin/import-mock` imports league, groups, teams, fixtures, and bracket placeholders.
 - `POST /api/admin/recalculate` recalculates finished fixture points.
-- `POST /api/admin/sync-results` records the football-data.org sync placeholder.
+- `POST /api/admin/sync-results` runs a football-data.org sync for the selected date range.
+- `GET /api/cron/football-data` runs the daily football-data.org sync from Vercel Cron.
 - `GET /api/friends/match/:fixtureId` returns visible friends' match predictions through RLS.
 - `GET /api/friends/group/:groupId` returns visible friends' group predictions through RLS.
 

@@ -5,11 +5,14 @@ import { EmptyState } from "@/components/EmptyState";
 import { LeagueCodeCard } from "@/components/LeagueCodeCard";
 import { StatCard } from "@/components/StatCard";
 import { StatusBadge } from "@/components/StatusBadge";
+import { TodayBettingPanel } from "@/components/TodayBettingPanel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getTodaysBettableMatches } from "@/lib/backend/fixtures";
 import { dashboardStats, groupMatches, groups, users } from "@/lib/mock-data";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const todaysMatches = await getTodaysBettableMatches();
   const nextMatches = groupMatches.slice(8, 14);
   const missing = groupMatches.filter((match) => match.status === "draft").slice(0, 4);
 
@@ -32,6 +35,8 @@ export default function DashboardPage() {
             <StatCard key={stat.label} {...stat} />
           ))}
         </div>
+
+        <TodayBettingPanel matches={todaysMatches} />
 
         <div className="grid gap-5 lg:grid-cols-[1.2fr_0.8fr]">
           <Card>

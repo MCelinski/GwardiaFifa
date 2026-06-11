@@ -44,7 +44,7 @@ export function TodayBettingPanel({ matches }: { matches: TodayBettableMatch[] }
                   </span>
                 </div>
 
-                <div className="mt-4 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+                <div className="mt-4 grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-3">
                   <Team flag={match.flagA} name={match.teamA} right />
                   <div className="flex items-center gap-2">
                     <Input
@@ -96,9 +96,9 @@ export function TodayBettingPanel({ matches }: { matches: TodayBettableMatch[] }
 function Team({ flag, name, right }: { flag: string; name: string; right?: boolean }) {
   return (
     <span className={`flex min-w-0 items-center gap-2 ${right ? "justify-end text-right" : ""}`}>
-      {!right ? <Flag code={flag} name={name} className="h-6 w-8" /> : null}
+      {!right ? <Flag code={flag} name={name} className="h-6 w-8 shrink-0" /> : null}
       <span className="min-w-0 truncate text-sm font-semibold">{name}</span>
-      {right ? <Flag code={flag} name={name} className="h-6 w-8" /> : null}
+      {right ? <Flag code={flag} name={name} className="h-6 w-8 shrink-0" /> : null}
     </span>
   );
 }

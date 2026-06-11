@@ -110,7 +110,7 @@ export default async function DashboardPage() {
                     <StatusBadge status={match.status} />
                     <span className="text-xs text-muted-foreground">{match.date}</span>
                   </div>
-                  <div className="mt-4 flex items-center justify-between gap-3">
+                  <div className="mt-4 grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
                     <Team flag={match.flagA} name={match.teamA} />
                     <span className="text-muted-foreground">vs</span>
                     <Team flag={match.flagB} name={match.teamB} right />
@@ -134,9 +134,9 @@ export default async function DashboardPage() {
 function Team({ flag, name, right }: { flag: string; name: string; right?: boolean }) {
   return (
     <span className={`flex min-w-0 items-center gap-2 ${right ? "justify-end text-right" : ""}`}>
-      {!right ? <Flag code={flag} name={name} className="h-6 w-8" /> : null}
+      {!right ? <Flag code={flag} name={name} className="h-6 w-8 shrink-0" /> : null}
       <span className="min-w-0 truncate text-sm font-semibold">{name}</span>
-      {right ? <Flag code={flag} name={name} className="h-6 w-8" /> : null}
+      {right ? <Flag code={flag} name={name} className="h-6 w-8 shrink-0" /> : null}
     </span>
   );
 }

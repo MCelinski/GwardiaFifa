@@ -48,7 +48,7 @@ export function MatchScoreCard({
             <span className="text-xs uppercase text-muted-foreground">{contextLabel}</span>
           </div>
 
-          <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-3">
+          <div className="mt-5 grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2 sm:gap-3">
             <TeamBlock flag={flagA} name={teamA} align="right" />
             <div className="flex items-center gap-1.5 sm:gap-2">
               <Input
@@ -93,7 +93,7 @@ function TeamBlock({ flag, name, align = "left" }: { flag?: string; name: string
   return (
     <div className={`flex min-w-0 items-center gap-2 sm:gap-3 ${align === "right" ? "justify-end text-right" : ""}`}>
       {align === "right" ? <span className="min-w-0 truncate text-sm font-semibold">{name}</span> : null}
-      {flag ? <Flag code={flag} name={name} className="h-6 w-9" /> : null}
+      {flag ? <Flag code={flag} name={name} className="h-6 w-9 shrink-0" /> : null}
       {align === "left" ? <span className="min-w-0 truncate text-sm font-semibold">{name}</span> : null}
     </div>
   );

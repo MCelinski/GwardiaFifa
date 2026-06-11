@@ -46,10 +46,14 @@ export default async function KnockoutPage() {
                     fixtureId={match.id}
                     teamA={match.teamA}
                     teamB={match.teamB}
+                    flagA={match.flagA}
+                    flagB={match.flagB}
                     contextLabel={match.round}
                     dateLabel={match.date}
                     locked={lockedStatuses.includes(match.status)}
+                    isLive={match.status === "live"}
                     prediction={match.prediction}
+                    result={match.result}
                   />
                 ))}
               </div>

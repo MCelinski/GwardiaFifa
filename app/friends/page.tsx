@@ -1,6 +1,7 @@
 import { EyeOff } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { EmptyState } from "@/components/EmptyState";
+import { Flag } from "@/components/Flag";
 import { FriendsPredictionsModal } from "@/components/FriendsPredictionsModal";
 import { StatusBadge } from "@/components/StatusBadge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,12 +29,36 @@ export default async function FriendsPage() {
             {lockedMatches.length ? (
               lockedMatches.map((match) => (
                 <div key={match.id} className="rounded-lg border border-white/8 bg-white/5 p-4">
-                  <div className="flex items-center justify-between">
+                  <div className="flex items-center justify-between gap-2">
                     <StatusBadge status={match.status} />
                     <Badge variant="green">widoczne</Badge>
                   </div>
-                  <p className="mt-4 font-semibold">{match.teamA} vs {match.teamB}</p>
-                  <p className="text-sm text-muted-foreground">{match.date}</p>
+
+                  {/* Realny wynik meczu (typy znajomych są w oknie poniżej) */}
+                  <div className="mt-4 grid min-w-0 grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] items-center gap-2">
+                    <span className="flex min-w-0 items-center justify-end gap-2 text-right">
+                      <span className="min-w-0 truncate text-sm font-semibold">{match.teamA}</span>
+                      <Flag code={match.flagA} name={match.teamA} className="h-6 w-9 shrink-0" />
+                    </span>
+                    <div className="flex flex-col items-center">
+                      <span
+                        className={`text-[10px] uppercase tracking-wide ${match.status === "live" ? "text-red-300" : "text-muted-foreground"}`}
+                      >
+                        {match.status === "live" ? "Wynik na żywo" : "Wynik"}
+                      </span>
+                      <span
+                        className={`text-xl font-black tabular-nums ${match.status === "live" ? "text-red-300" : match.result ? "text-foreground" : "text-muted-foreground"}`}
+                      >
+                        {match.result ? `${match.result[0]} : ${match.result[1]}` : "– : –"}
+                      </span>
+                    </div>
+                    <span className="flex min-w-0 items-center gap-2">
+                      <Flag code={match.flagB} name={match.teamB} className="h-6 w-9 shrink-0" />
+                      <span className="min-w-0 truncate text-sm font-semibold">{match.teamB}</span>
+                    </span>
+                  </div>
+
+                  <p className="mt-2 text-center text-xs text-muted-foreground">{match.date}</p>
                   <div className="mt-4"><FriendsPredictionsModal locked fixtureId={match.id} /></div>
                 </div>
               ))

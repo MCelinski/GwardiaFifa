@@ -156,7 +156,7 @@ export async function getKnockoutMatches(): Promise<KnockoutMatch[]> {
     supabase
       .from("fixtures")
       .select(
-        "id, starts_at, status, round, placeholder_a, placeholder_b, team_a:team_a_id(name), team_b:team_b_id(name)"
+        "id, starts_at, status, round, placeholder_a, placeholder_b, score_a, score_b, team_a:team_a_id(name, flag_code), team_b:team_b_id(name, flag_code)"
       )
       .eq("league_id", leagueId)
       .eq("stage", "knockout")
@@ -175,6 +175,10 @@ export async function getKnockoutMatches(): Promise<KnockoutMatch[]> {
       const teamB = pickTeam(fixture.team_b);
       const prediction = predictionByFixture.get(fixture.id);
       const status = resolveMatchStatus(fixture.status, lockAt, now, Boolean(prediction));
+      const result =
+        fixture.score_a !== null && fixture.score_b !== null
+          ? ([fixture.score_a, fixture.score_b] as [number, number])
+          : undefined;
 
       return {
         knownTeams: Boolean(teamA?.name && teamB?.name),
@@ -184,8 +188,11 @@ export async function getKnockoutMatches(): Promise<KnockoutMatch[]> {
           date: formatWarsawDateTime(startsAt),
           teamA: teamA?.name ?? fixture.placeholder_a ?? "TBD",
           teamB: teamB?.name ?? fixture.placeholder_b ?? "TBD",
+          flagA: teamA?.flag_code ?? "A",
+          flagB: teamB?.flag_code ?? "B",
           status,
           prediction: prediction ? ([prediction.score_a, prediction.score_b] as [number, number]) : undefined,
+          result,
           friendsVisible: areFriendsPicksVisible(fixture.status, startsAt, now)
         } satisfies KnockoutMatch
       };

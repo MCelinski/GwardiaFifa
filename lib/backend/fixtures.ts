@@ -17,6 +17,7 @@ export type TodayBettableMatch = {
   round: string | null;
   status: string;
   canPredict: boolean;
+  result: [number, number] | null;
   prediction: {
     scoreA: number;
     scoreB: number;
@@ -45,7 +46,7 @@ export async function getTodaysBettableMatches(): Promise<TodayBettableMatch[]> 
   const { data: fixtures, error } = await supabase
     .from("fixtures")
     .select(
-      "id, starts_at, status, stage, round, group_code, placeholder_a, placeholder_b, team_a:team_a_id(name, flag_code), team_b:team_b_id(name, flag_code)"
+      "id, starts_at, status, stage, round, group_code, placeholder_a, placeholder_b, score_a, score_b, team_a:team_a_id(name, flag_code), team_b:team_b_id(name, flag_code)"
     )
     .gte("starts_at", start.toISOString())
     .lte("starts_at", end.toISOString())
@@ -85,6 +86,10 @@ export async function getTodaysBettableMatches(): Promise<TodayBettableMatch[]> 
       round: fixture.round,
       status: fixture.status,
       canPredict: lockAt > now,
+      result:
+        fixture.score_a !== null && fixture.score_b !== null
+          ? [fixture.score_a, fixture.score_b]
+          : null,
       prediction: prediction
         ? {
             scoreA: prediction.score_a,

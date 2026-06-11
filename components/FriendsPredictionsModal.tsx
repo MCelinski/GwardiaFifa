@@ -80,7 +80,7 @@ export function FriendsPredictionsModal({
                       <div className="grid h-9 w-9 place-items-center rounded-md bg-white/10 text-xs font-bold">{profile?.avatar_initials ?? "?"}</div>
                       <div>
                         <p className="font-semibold">{profile?.display_name ?? "Gracz"}</p>
-                        <p className="text-sm text-muted-foreground">{prediction.score_a} : {prediction.score_b}</p>
+                        <p className="text-sm text-muted-foreground">Typ: {prediction.score_a} : {prediction.score_b}</p>
                       </div>
                     </div>
                     {prediction.points !== null ? <Badge variant="gold">{prediction.points} pkt</Badge> : <Badge variant="muted">{prediction.status}</Badge>}

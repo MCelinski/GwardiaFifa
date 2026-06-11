@@ -15,7 +15,9 @@ export function GroupMatchPredictionCard({ match }: { match: Match }) {
       dateLabel={match.date}
       deadlineLabel={match.deadline}
       locked={locked}
+      isLive={match.status === "live"}
       prediction={match.prediction}
+      result={match.result}
     />
   );
 }

@@ -60,8 +60,11 @@ export type KnockoutMatch = {
   date: string;
   teamA: string;
   teamB: string;
+  flagA?: string;
+  flagB?: string;
   status: PredictionStatus;
   prediction?: [number, number];
+  result?: [number, number];
   winner?: string;
   friendsVisible: boolean;
 };

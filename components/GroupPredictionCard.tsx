@@ -16,12 +16,17 @@ export function GroupPredictionCard({ group }: { group: GroupStandingPrediction 
   const [isPending, startTransition] = useTransition();
   const locked = ["locked", "scored"].includes(group.status);
 
+  function reorder(from: number, to: number) {
+    if (locked || to < 0 || to >= teams.length || from === to) return;
+    const next = [...teams];
+    const [moved] = next.splice(from, 1);
+    next.splice(to, 0, moved);
+    setTeams(next);
+  }
+
   function moveTeam(dropIndex: number) {
     if (dragIndex === null || dragIndex === dropIndex || locked) return;
-    const next = [...teams];
-    const [moved] = next.splice(dragIndex, 1);
-    next.splice(dropIndex, 0, moved);
-    setTeams(next);
+    reorder(dragIndex, dropIndex);
     setDragIndex(null);
   }
 
@@ -57,9 +62,14 @@ export function GroupPredictionCard({ group }: { group: GroupStandingPrediction 
             team={team}
             position={index + 1}
             draggable={!locked}
+            locked={locked}
+            canMoveUp={index > 0}
+            canMoveDown={index < teams.length - 1}
             onDragStart={() => setDragIndex(index)}
             onDragOver={(event) => event.preventDefault()}
             onDrop={() => moveTeam(index)}
+            onMoveUp={() => reorder(index, index - 1)}
+            onMoveDown={() => reorder(index, index + 1)}
           />
         ))}
         <Button className="mt-3 w-full" variant={locked ? "secondary" : "default"} disabled={locked || isPending} onClick={save}>

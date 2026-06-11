@@ -3,6 +3,7 @@ import { CalendarClock, ListChecks } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { EmptyState } from "@/components/EmptyState";
 import { LeagueCodeCard } from "@/components/LeagueCodeCard";
+import { StandingsProgressCard } from "@/components/StandingsProgressCard";
 import { StatCard } from "@/components/StatCard";
 import { StatusBadge } from "@/components/StatusBadge";
 import { TodayBettingPanel } from "@/components/TodayBettingPanel";
@@ -123,7 +124,7 @@ export default async function DashboardPage() {
           </CardContent>
         </Card>
 
-        <EmptyState detail={`Groups waiting for standings picks: ${dashboard.draftGroupsCount}`} />
+        <StandingsProgressCard draftGroupsCount={dashboard.draftGroupsCount} />
       </div>
     </AppShell>
   );

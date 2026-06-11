@@ -9,7 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 
 const actions = [
-  { label: "Sync full World Cup schedule", icon: Upload, endpoint: "/api/admin/sync-full-schedule" },
+  { label: "Import official schedule", icon: Upload, endpoint: "/api/admin/import-official-schedule" },
   { label: "Sync today's results", icon: RefreshCw, endpoint: "/api/admin/sync-results" },
   { label: "Import mock data (dev only)", icon: Upload, endpoint: "/api/admin/import-mock" },
   { label: "Recalculate points", icon: Database, endpoint: "/api/admin/recalculate" },

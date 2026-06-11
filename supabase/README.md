@@ -23,7 +23,7 @@ curl -X POST http://localhost:3000/api/admin/import-mock -H "Authorization: Bear
 For production, import the real schedule instead:
 
 ```bash
-curl -X POST http://localhost:3000/api/admin/sync-full-schedule -H "Authorization: Bearer $CRON_SECRET"
+curl -X POST http://localhost:3000/api/admin/import-official-schedule -H "Authorization: Bearer $CRON_SECRET"
 ```
 
 If `CRON_SECRET` is not set, admin API routes are allowed only in non-production.
@@ -31,7 +31,7 @@ If `CRON_SECRET` is not set, admin API routes are allowed only in non-production
 ## Backend endpoints
 
 - `POST /api/admin/import-mock` imports fake local dev/test data only.
-- `POST /api/admin/sync-full-schedule` imports the real World Cup 2026 schedule from football-data.org.
+- `POST /api/admin/import-official-schedule` imports the committed official World Cup 2026 schedule snapshot.
 - `POST /api/admin/recalculate` recalculates finished fixture points.
 - `POST /api/admin/sync-results` runs a football-data.org sync for the selected date range.
 - `GET /api/cron/football-data` runs the daily football-data.org sync from Vercel Cron.

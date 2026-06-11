@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAuthorizedAdminRequest } from "@/lib/backend/admin-auth";
-import { syncFullWorldCupSchedule } from "@/lib/backend/football-data";
+import { importOfficialSchedule } from "@/lib/backend/import-official-schedule";
 import { canUseSupabaseAdmin } from "@/lib/supabase/server";
 
 export async function POST(request: NextRequest) {
@@ -13,11 +13,11 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    const result = await syncFullWorldCupSchedule();
-    return NextResponse.json({ ok: true, provider: "football-data.org", result });
+    const result = await importOfficialSchedule();
+    return NextResponse.json({ ok: true, source: "static-official-schedule", result });
   } catch (error) {
     return NextResponse.json(
-      { ok: false, provider: "football-data.org", error: error instanceof Error ? error.message : "Unknown sync error" },
+      { ok: false, source: "static-official-schedule", error: error instanceof Error ? error.message : "Unknown import error" },
       { status: 500 }
     );
   }

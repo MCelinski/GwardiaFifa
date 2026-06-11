@@ -13,7 +13,7 @@ The app has a complete premium dashboard UI and a backend foundation ready for S
 - server actions for login/register/join league and saving predictions;
 - admin API routes for mock import, sync placeholder, and point recalculation;
 - real football-data.org sync endpoint wired for Vercel Cron;
-- full tournament schedule import from football-data.org for `2026-06-11` through `2026-07-19`;
+- static official schedule import with 104 World Cup 2026 fixtures from a football-data.org snapshot;
 - podium picks with the same lock deadline as group standings;
 - dashboard panel with today's matches that the current user can still predict;
 - mock fallback when Supabase env vars are not configured.
@@ -55,10 +55,10 @@ npm run dev
 curl -X POST http://localhost:3000/api/admin/import-mock -H "Authorization: Bearer YOUR_CRON_SECRET"
 ```
 
-For production, prefer the real schedule import:
+For production, prefer the static official schedule import:
 
 ```bash
-curl -X POST http://localhost:3000/api/admin/sync-full-schedule -H "Authorization: Bearer YOUR_CRON_SECRET"
+curl -X POST http://localhost:3000/api/admin/import-official-schedule -H "Authorization: Bearer YOUR_CRON_SECRET"
 ```
 
 `/api/admin/import-mock` is only for local UI/dev testing when football-data.org is unavailable.
@@ -77,11 +77,11 @@ The database enforces lock rules with RLS:
 
 - Configure Supabase env vars in Vercel.
 - Run all SQL migrations in Supabase.
-- Import fixtures using `/api/admin/sync-full-schedule`.
+- Import fixtures using `/api/admin/import-official-schedule`.
 - Create the first admin user and set their `profiles.is_admin = true` plus `league_members.role = 'admin'`.
 - Enable email/password auth in Supabase.
 - Set Vercel environment variable `CRON_SECRET`.
 - Vercel Cron runs `GET /api/cron/football-data` once per day on Hobby, configured in `vercel.json`.
 - football-data.org sync calls `/v4/competitions/{competition}/matches?season=2026&dateFrom=today&dateTo=today`.
-- Full schedule import calls the same API for `dateFrom=2026-06-11&dateTo=2026-07-19`.
-- Local verification on the configured football-data.org key returned 104 World Cup 2026 matches for `WC` season `2026`.
+- Full schedule import uses the committed static snapshot in `lib/official-schedule.ts`.
+- football-data.org remains used for today's results sync.

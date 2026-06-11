@@ -175,27 +175,33 @@ export async function saveTournamentPredictionFormAction(formData: FormData) {
     throw new Error("Podium picks are locked.");
   }
 
-  const payloads: Record<string, unknown>[] = [
-    {
-      league_id: data.leagueId,
-      user_id: userId,
-      champion_team_id: data.championTeamId,
-      finalist_a_team_id: data.runnerUpTeamId,
-      finalist_b_team_id: data.thirdPlaceTeamId,
-      status: "saved"
-    },
-    {
-      league_id: data.leagueId,
-      user_id: userId,
-      champion_team_id: data.championTeamId,
-      runner_up_team_id: data.runnerUpTeamId,
-      third_place_team_id: data.thirdPlaceTeamId,
-      status: "saved"
-    }
-  ];
+  // Canonical podium columns (runner_up/third_place) drive scoring. We also
+  // mirror the legacy finalist_a/finalist_b columns so the row stays valid if
+  // those columns are still NOT NULL on older databases.
+  const fullPayload: Record<string, unknown> = {
+    league_id: data.leagueId,
+    user_id: userId,
+    champion_team_id: data.championTeamId,
+    runner_up_team_id: data.runnerUpTeamId,
+    third_place_team_id: data.thirdPlaceTeamId,
+    finalist_a_team_id: data.runnerUpTeamId,
+    finalist_b_team_id: data.thirdPlaceTeamId,
+    status: "saved"
+  };
+
+  // Fallback for a database where migration 0004 has not been applied yet and
+  // the podium columns do not exist.
+  const legacyPayload: Record<string, unknown> = {
+    league_id: data.leagueId,
+    user_id: userId,
+    champion_team_id: data.championTeamId,
+    finalist_a_team_id: data.runnerUpTeamId,
+    finalist_b_team_id: data.thirdPlaceTeamId,
+    status: "saved"
+  };
 
   let lastError: unknown = null;
-  for (const payload of payloads) {
+  for (const payload of [fullPayload, legacyPayload]) {
     const { error } = await supabase.from("tournament_predictions").upsert(payload, { onConflict: "league_id,user_id" });
     if (!error) {
       lastError = null;

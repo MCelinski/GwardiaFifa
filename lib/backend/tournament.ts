@@ -52,16 +52,18 @@ export async function getTournamentPredictionState(): Promise<TournamentPredicti
     supabase.from("world_cup_groups").select("standings_deadline").order("standings_deadline", { ascending: true }).limit(1).single()
   ]);
 
+  // Canonical podium columns first; fall back to legacy finalist columns only
+  // if the podium columns do not exist yet (pre-0004 database).
   const predictionQueries = [
     supabase
       .from("tournament_predictions")
-      .select("champion_team_id, finalist_a_team_id, finalist_b_team_id, points, status")
+      .select("champion_team_id, runner_up_team_id, third_place_team_id, points, status")
       .eq("league_id", league.id)
       .eq("user_id", userId)
       .maybeSingle(),
     supabase
       .from("tournament_predictions")
-      .select("champion_team_id, runner_up_team_id, third_place_team_id, points, status")
+      .select("champion_team_id, finalist_a_team_id, finalist_b_team_id, points, status")
       .eq("league_id", league.id)
       .eq("user_id", userId)
       .maybeSingle()
@@ -80,7 +82,12 @@ export async function getTournamentPredictionState(): Promise<TournamentPredicti
     if (!isMissingColumnError(result.error)) break;
   }
 
-  if (predictionError) throw predictionError;
+  // Never let a prediction-read failure crash the whole knockout page; degrade
+  // to "no saved prediction" instead of throwing a 500.
+  if (predictionError) {
+    console.error("getTournamentPredictionState: prediction read failed", predictionError);
+    prediction = null;
+  }
 
   const deadlineDate = deadline?.standings_deadline ? new Date(deadline.standings_deadline) : null;
 

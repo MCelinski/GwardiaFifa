@@ -171,8 +171,8 @@ export async function saveTournamentPredictionFormAction(formData: FormData) {
       league_id: data.leagueId,
       user_id: userId,
       champion_team_id: data.championTeamId,
-      runner_up_team_id: data.runnerUpTeamId,
-      third_place_team_id: data.thirdPlaceTeamId,
+      finalist_a_team_id: data.runnerUpTeamId,
+      finalist_b_team_id: data.thirdPlaceTeamId,
       status: "saved"
     },
     { onConflict: "league_id,user_id" }

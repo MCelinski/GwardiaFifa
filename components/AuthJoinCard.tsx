@@ -95,7 +95,7 @@ export function AuthJoinCard() {
         </form>
 
         <div className="mt-5 rounded-lg border border-white/10 bg-white/5 p-3 text-xs text-muted-foreground">
-          Kod ligi: <span className="font-mono text-gold">{league.inviteCode}</span>
+          Kod ligi: <span className="break-all font-mono text-gold">{league.inviteCode}</span>
         </div>
       </CardContent>
     </Card>

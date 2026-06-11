@@ -22,7 +22,7 @@ export default function JoinLeaguePage() {
             <Trophy className="h-3.5 w-3.5 shrink-0" />
             <span className="min-w-0 truncate">Prywatna liga Mistrzostw Świata 2026</span>
           </Badge>
-          <div className="mt-8 flex min-w-0 items-center gap-4 sm:gap-5">
+          <div className="mt-8 flex min-w-0 flex-col items-start gap-4 sm:flex-row sm:items-center sm:gap-5">
             <GwardiaPiwoCrest className="h-16 w-16 shrink-0 sm:h-24 sm:w-24" />
             <div className="min-w-0">
               <p className="text-sm font-semibold uppercase text-gold">{league.name}</p>

@@ -1,16 +1,7 @@
-import { league as mockLeague, users as mockUsers } from "@/lib/mock-data";
-import { canUseSupabase, createClient } from "@/lib/supabase/server";
+import { league } from "@/lib/league";
+import { createClient } from "@/lib/supabase/server";
 
 export async function getCurrentUserProfile() {
-  if (!canUseSupabase()) {
-    return {
-      id: "mock-user",
-      display_name: mockUsers[0].name,
-      avatar_initials: mockUsers[0].avatar,
-      is_admin: true
-    };
-  }
-
   const supabase = await createClient();
   const { data: claims } = await supabase.auth.getClaims();
   const userId = claims?.claims.sub;
@@ -27,15 +18,11 @@ export async function getCurrentUserProfile() {
 }
 
 export async function getPrimaryLeague() {
-  if (!canUseSupabase()) {
-    return { id: "mock-league", name: mockLeague.name, invite_code: mockLeague.inviteCode };
-  }
-
   const supabase = await createClient();
   const { data } = await supabase
     .from("leagues")
     .select("id, name, invite_code")
-    .eq("invite_code", mockLeague.inviteCode)
+    .eq("invite_code", league.inviteCode)
     .single();
 
   return data;

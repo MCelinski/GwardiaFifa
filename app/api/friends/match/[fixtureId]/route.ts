@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
-import { canUseSupabase, createClient } from "@/lib/supabase/server";
-import { friendsPredictions } from "@/lib/mock-data";
+import { createClient } from "@/lib/supabase/server";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ fixtureId: string }> }) {
   const { fixtureId } = await params;
-
-  if (!canUseSupabase()) {
-    return NextResponse.json({ locked: true, predictions: friendsPredictions, fixtureId });
-  }
 
   const supabase = await createClient();
   const { data, error } = await supabase

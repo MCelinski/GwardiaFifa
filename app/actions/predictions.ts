@@ -77,6 +77,16 @@ export async function saveMatchPredictionFormAction(formData: FormData) {
   redirect("/dashboard");
 }
 
+// Same as the form action above but stays on the current page (revalidates in
+// saveMatchPredictionAction instead of redirecting to the dashboard).
+export async function saveMatchPredictionInlineFormAction(formData: FormData) {
+  await saveMatchPredictionAction({
+    fixtureId: String(formData.get("fixtureId") ?? ""),
+    scoreA: String(formData.get("scoreA") ?? ""),
+    scoreB: String(formData.get("scoreB") ?? "")
+  });
+}
+
 export async function saveGroupStandingPredictionAction(input: z.input<typeof groupSchema>) {
   const data = groupSchema.parse(input);
   const supabase = await createClient();

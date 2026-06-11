@@ -1,7 +1,6 @@
-import { groupMatches } from "@/lib/mock-data";
 import { MATCH_LOCK_MINUTES } from "@/lib/rules";
-import { formatWarsawDateTime, isSameWarsawDay } from "@/lib/time";
-import { canUseSupabase, createClient } from "@/lib/supabase/server";
+import { formatWarsawDateTime } from "@/lib/time";
+import { createClient } from "@/lib/supabase/server";
 
 export type TodayBettableMatch = {
   id: string;
@@ -26,40 +25,6 @@ export type TodayBettableMatch = {
 };
 
 export async function getTodaysBettableMatches(): Promise<TodayBettableMatch[]> {
-  if (!canUseSupabase()) {
-    const now = new Date();
-
-    return groupMatches
-      .filter((match) => isSameWarsawDay(new Date(match.date), now))
-      .map((match) => {
-        const startsAt = new Date(match.date);
-        const lockAt = new Date(startsAt.getTime() - MATCH_LOCK_MINUTES * 60 * 1000);
-        return {
-          id: match.id,
-          teamA: match.teamA,
-          teamB: match.teamB,
-          flagA: match.flagA,
-          flagB: match.flagB,
-          startsAt: startsAt.toISOString(),
-          displayStartsAt: formatWarsawDateTime(startsAt),
-          lockAt: lockAt.toISOString(),
-          displayLockAt: formatWarsawDateTime(lockAt),
-          stage: "group",
-          groupCode: match.group ?? null,
-          round: "Group Stage",
-          status: match.status,
-          canPredict: lockAt > now,
-          prediction: match.prediction
-            ? {
-                scoreA: match.prediction[0],
-                scoreB: match.prediction[1],
-                status: match.status
-              }
-            : null
-        } satisfies TodayBettableMatch;
-      });
-  }
-
   const supabase = await createClient();
   const { data: claims } = await supabase.auth.getClaims();
   const userId = claims?.claims.sub;

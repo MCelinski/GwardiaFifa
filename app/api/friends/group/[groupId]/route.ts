@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
-import { canUseSupabase, createClient } from "@/lib/supabase/server";
-import { groups } from "@/lib/mock-data";
+import { createClient } from "@/lib/supabase/server";
 
 export async function GET(_request: Request, { params }: { params: Promise<{ groupId: string }> }) {
   const { groupId } = await params;
-
-  if (!canUseSupabase()) {
-    return NextResponse.json({ groupId, predictions: groups.slice(0, 1) });
-  }
 
   const supabase = await createClient();
   const { data, error } = await supabase

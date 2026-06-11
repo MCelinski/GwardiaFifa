@@ -1,5 +1,5 @@
 import { officialWorldCupSchedule } from "@/lib/official-schedule";
-import { league } from "@/lib/mock-data";
+import { league } from "@/lib/league";
 import { createAdminClient } from "@/lib/supabase/server";
 
 const statusMap: Record<string, "scheduled" | "live" | "finished" | "locked"> = {

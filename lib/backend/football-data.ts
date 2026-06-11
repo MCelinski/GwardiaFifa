@@ -1,4 +1,4 @@
-import { league } from "@/lib/mock-data";
+import { league } from "@/lib/league";
 import { createAdminClient } from "@/lib/supabase/server";
 import { toDateInputValue } from "@/lib/time";
 

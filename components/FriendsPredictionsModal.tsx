@@ -1,14 +1,64 @@
 "use client";
 
+import { useState } from "react";
 import { EyeOff } from "lucide-react";
-import { friendsPredictions } from "@/lib/mock-data";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
-export function FriendsPredictionsModal({ locked = true, label = "View friends predictions" }: { locked?: boolean; label?: string }) {
+type FriendMatchPrediction = {
+  id: string;
+  score_a: number;
+  score_b: number;
+  points: number | null;
+  status: string;
+  profiles: { display_name: string; avatar_initials: string } | { display_name: string; avatar_initials: string }[] | null;
+};
+
+function readProfile(profiles: FriendMatchPrediction["profiles"]) {
+  if (Array.isArray(profiles)) return profiles[0] ?? null;
+  return profiles;
+}
+
+export function FriendsPredictionsModal({
+  locked = true,
+  label = "View friends predictions",
+  fixtureId,
+  groupId
+}: {
+  locked?: boolean;
+  label?: string;
+  fixtureId?: string;
+  groupId?: string;
+}) {
+  const [predictions, setPredictions] = useState<FriendMatchPrediction[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+
+  async function loadPredictions(open: boolean) {
+    if (!open || loaded || !locked) return;
+    const endpoint = fixtureId
+      ? `/api/friends/match/${fixtureId}`
+      : groupId
+        ? `/api/friends/group/${groupId}`
+        : null;
+    if (!endpoint) return;
+
+    setLoading(true);
+    try {
+      const response = await fetch(endpoint);
+      const payload = (await response.json().catch(() => ({}))) as { predictions?: FriendMatchPrediction[] };
+      setPredictions(payload.predictions ?? []);
+    } catch {
+      setPredictions([]);
+    } finally {
+      setLoading(false);
+      setLoaded(true);
+    }
+  }
+
   return (
-    <Dialog>
+    <Dialog onOpenChange={loadPredictions}>
       <DialogTrigger asChild>
         <Button variant="secondary">{label}</Button>
       </DialogTrigger>
@@ -19,20 +69,29 @@ export function FriendsPredictionsModal({ locked = true, label = "View friends p
         </DialogDescription>
         {locked ? (
           <div className="mt-5 space-y-3">
-            {friendsPredictions.map((prediction) => (
-              <div key={prediction.user.id} className="flex items-center justify-between gap-3 rounded-md border border-white/10 bg-white/5 p-3">
-                <div className="flex items-center gap-3">
-                  <div className="grid h-9 w-9 place-items-center rounded-md bg-white/10 text-xs font-bold">{prediction.user.avatar}</div>
-                  <div>
-                    <p className="font-semibold">{prediction.user.name}</p>
-                    <p className="text-sm text-muted-foreground">{prediction.score[0]} : {prediction.score[1]}</p>
+            {loading ? (
+              <p className="text-sm text-muted-foreground">Ladowanie typow...</p>
+            ) : predictions.length ? (
+              predictions.map((prediction) => {
+                const profile = readProfile(prediction.profiles);
+                return (
+                  <div key={prediction.id} className="flex items-center justify-between gap-3 rounded-md border border-white/10 bg-white/5 p-3">
+                    <div className="flex items-center gap-3">
+                      <div className="grid h-9 w-9 place-items-center rounded-md bg-white/10 text-xs font-bold">{profile?.avatar_initials ?? "?"}</div>
+                      <div>
+                        <p className="font-semibold">{profile?.display_name ?? "Gracz"}</p>
+                        <p className="text-sm text-muted-foreground">{prediction.score_a} : {prediction.score_b}</p>
+                      </div>
+                    </div>
+                    {prediction.points !== null ? <Badge variant="gold">{prediction.points} pts</Badge> : <Badge variant="muted">{prediction.status}</Badge>}
                   </div>
-                </div>
-                <Badge variant={prediction.result === "exact" ? "gold" : prediction.result === "outcome" ? "green" : "red"}>
-                  {prediction.result} · {prediction.points} pts
-                </Badge>
+                );
+              })
+            ) : (
+              <div className="rounded-lg border border-white/10 bg-white/5 p-6 text-center text-sm text-muted-foreground">
+                Brak typow znajomych do pokazania.
               </div>
-            ))}
+            )}
           </div>
         ) : (
           <div className="mt-5 rounded-lg border border-white/10 bg-white/5 p-6 text-center">

@@ -1,7 +1,7 @@
 "use client";
 
 import { GripVertical } from "lucide-react";
-import type { Team } from "@/lib/mock-data";
+import type { Team } from "@/lib/types";
 
 export function DraggableTeamRow({
   team,

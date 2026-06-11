@@ -1,15 +1,16 @@
-import { Eye, Save } from "lucide-react";
+import { Eye } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { DeadlineBanner } from "@/components/DeadlineBanner";
+import { EmptyState } from "@/components/EmptyState";
 import { FriendsPredictionsModal } from "@/components/FriendsPredictionsModal";
 import { GroupPredictionCard } from "@/components/GroupPredictionCard";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { groups } from "@/lib/mock-data";
+import { getGroupStandings } from "@/lib/backend/predictions-view";
 import { GROUP_STANDINGS_DEADLINE_LABEL } from "@/lib/rules";
 
-export default function GroupStandingsPage() {
+export default async function GroupStandingsPage() {
+  const groups = await getGroupStandings();
+
   return (
     <AppShell>
       <div className="space-y-5">
@@ -21,22 +22,19 @@ export default function GroupStandingsPage() {
               Drag teams from 1 to 4 and save the predicted final order for every group.
             </p>
           </div>
-          <div className="flex items-center gap-3">
-            <Badge variant="green">Auto-save enabled</Badge>
-            <Button>
-              <Save className="h-4 w-4" />
-              Save all groups
-            </Button>
-          </div>
         </div>
 
         <DeadlineBanner>Typy końcowych tabel grup można ustawić do {GROUP_STANDINGS_DEADLINE_LABEL}. Do tego momentu są ukryte przed innymi.</DeadlineBanner>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          {groups.map((group) => (
-            <GroupPredictionCard key={group.group} group={group} />
-          ))}
-        </div>
+        {groups.length ? (
+          <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            {groups.map((group) => (
+              <GroupPredictionCard key={group.group} group={group} />
+            ))}
+          </div>
+        ) : (
+          <EmptyState title="Brak grup do typowania." detail="Admin musi zaimportowac oficjalny terminarz World Cup 2026." />
+        )}
 
         <Card>
           <CardContent className="flex flex-wrap items-center justify-between gap-3 p-5">

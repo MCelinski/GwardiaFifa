@@ -1,47 +1,74 @@
-import { Save } from "lucide-react";
+import { Info } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
-import { BracketView } from "@/components/BracketView";
+import { EmptyState } from "@/components/EmptyState";
 import { FriendsPredictionsModal } from "@/components/FriendsPredictionsModal";
+import { MatchScoreCard } from "@/components/MatchScoreCard";
 import { TournamentPicksCard } from "@/components/TournamentPicksCard";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getTournamentPredictionState } from "@/lib/backend/tournament";
-import { knockoutMatches } from "@/lib/mock-data";
+import { getKnockoutMatches } from "@/lib/backend/predictions-view";
 
 export default async function KnockoutPage() {
-  const tournamentPickState = await getTournamentPredictionState();
+  const [tournamentPickState, knockoutMatches] = await Promise.all([
+    getTournamentPredictionState(),
+    getKnockoutMatches()
+  ]);
+
+  const lockedStatuses = ["locked", "live", "scored"];
 
   return (
     <AppShell>
       <div className="space-y-5">
-        <div className="flex flex-wrap items-start justify-between gap-4">
-          <div>
-            <p className="text-sm font-semibold uppercase text-gold">Bracket predictions</p>
-            <h1 className="mt-2 text-3xl font-black">Knockout predictions</h1>
-            <p className="mt-2 max-w-2xl text-muted-foreground">
-              Predict knockout match scores only when fixtures are known. Before the tournament, pick only the final podium.
-            </p>
-          </div>
-          <div className="flex items-center gap-3">
-            <Badge variant="muted">Match picks unlock when teams are known</Badge>
-            <Button>
-              <Save className="h-4 w-4" />
-              Save bracket
-            </Button>
-          </div>
+        <div>
+          <p className="text-sm font-semibold uppercase text-gold">Faza pucharowa</p>
+          <h1 className="mt-2 text-3xl font-black">Podium i mecze pucharowe</h1>
+          <p className="mt-2 max-w-2xl text-muted-foreground">
+            Przed turniejem typujesz tylko podium. Mecze pucharowe pojawiają się do typowania dopiero wtedy,
+            gdy znane są obie drużyny.
+          </p>
         </div>
 
         <TournamentPicksCard state={tournamentPickState} />
 
-        <BracketView matches={knockoutMatches} />
+        <Card>
+          <CardHeader>
+            <CardTitle>Mecze pucharowe do obstawienia</CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Tylko mecze ze znanymi drużynami. Każdy typ zamyka się 10 minut przed pierwszym gwizdkiem.
+            </p>
+          </CardHeader>
+          <CardContent>
+            {knockoutMatches.length ? (
+              <div className="grid gap-3 xl:grid-cols-2">
+                {knockoutMatches.map((match) => (
+                  <MatchScoreCard
+                    key={match.id}
+                    fixtureId={match.id}
+                    teamA={match.teamA}
+                    teamB={match.teamB}
+                    contextLabel={match.round}
+                    dateLabel={match.date}
+                    locked={lockedStatuses.includes(match.status)}
+                    prediction={match.prediction}
+                  />
+                ))}
+              </div>
+            ) : (
+              <EmptyState
+                title="Brak meczów pucharowych do obstawienia."
+                detail="Drużyny w fazie pucharowej są znane dopiero po rozstrzygnięciu grup. Mecze pojawią się tutaj automatycznie."
+              />
+            )}
+          </CardContent>
+        </Card>
 
         <Card>
           <CardContent className="flex flex-wrap items-center justify-between gap-3 p-5">
-            <p className="text-sm text-muted-foreground">
-              Each knockout prediction locks 10 minutes before kickoff. Friends predictions unlock after kickoff.
+            <p className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Info className="h-4 w-4 text-gold" />
+              Typy znajomych odsłaniają się po rozpoczęciu danego meczu.
             </p>
-            <FriendsPredictionsModal locked={false} label="Preview hidden friends state" />
+            <FriendsPredictionsModal locked={false} label="Typy znajomych" />
           </CardContent>
         </Card>
       </div>

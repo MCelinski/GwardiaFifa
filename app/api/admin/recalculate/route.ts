@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { league } from "@/lib/mock-data";
+import { league } from "@/lib/league";
 import { isAuthorizedAdminRequest } from "@/lib/backend/admin-auth";
 import { canUseSupabaseAdmin, createAdminClient } from "@/lib/supabase/server";
 

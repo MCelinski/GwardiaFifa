@@ -1,5 +1,5 @@
 import { Copy, ShieldCheck } from "lucide-react";
-import { league } from "@/lib/mock-data";
+import { league } from "@/lib/league";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 

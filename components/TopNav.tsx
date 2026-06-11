@@ -3,24 +3,26 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Beer, Shield, UserCircle } from "lucide-react";
-import { league } from "@/lib/mock-data";
+import { league } from "@/lib/league";
 import { cn } from "@/lib/utils";
 import { GwardiaPiwoCrest } from "@/components/GwardiaPiwoCrest";
 import { Badge } from "@/components/ui/badge";
 
-const navItems = [
+const baseNavItems = [
   { href: "/dashboard", label: "Dashboard" },
   { href: "/predictions/group-matches", label: "Mecze" },
   { href: "/predictions/groups", label: "Grupy" },
   { href: "/predictions/knockout", label: "Knockout" },
   { href: "/leaderboard", label: "Tabela" },
   { href: "/friends", label: "Typy znajomych" },
-  { href: "/rules", label: "Regulamin" },
-  { href: "/admin", label: "Admin" }
+  { href: "/rules", label: "Regulamin" }
 ];
 
-export function TopNav() {
+const adminNavItem = { href: "/admin", label: "Admin" };
+
+export function TopNav({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname();
+  const navItems = isAdmin ? [...baseNavItems, adminNavItem] : baseNavItems;
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-ink/85 backdrop-blur-xl">

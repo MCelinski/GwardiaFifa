@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { league } from "@/lib/mock-data";
+import { league } from "@/lib/league";
 
 const authSchema = z.object({
   email: z.string().email(),

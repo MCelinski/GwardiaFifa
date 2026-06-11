@@ -2,13 +2,13 @@
 
 import { Fragment, useState } from "react";
 import { ChevronDown, ChevronRight, Trophy } from "lucide-react";
-import type { User } from "@/lib/mock-data";
+import type { User } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 
 export function LeaderboardTable({ users }: { users: User[] }) {
-  const [expanded, setExpanded] = useState<string | null>("u1");
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   return (
     <div className="overflow-hidden rounded-lg border border-white/10">
@@ -62,9 +62,9 @@ export function LeaderboardTable({ users }: { users: User[] }) {
                   <TR key={`${user.id}-expanded`} className="bg-white/[0.03]">
                     <TD colSpan={9}>
                       <div className="grid gap-3 p-2 text-sm text-muted-foreground md:grid-cols-3">
-                        <span><Trophy className="mr-2 inline h-4 w-4 text-gold" /> Exact score streak: 2</span>
-                        <span>Last event: +{user.points.last} from group match scoring</span>
-                        <span>Hidden picks: 7 predictions waiting for lock</span>
+                        <span><Trophy className="mr-2 inline h-4 w-4 text-gold" /> Mecze grupowe: {user.points.groupMatches} pkt</span>
+                        <span>Tabele grup: {user.points.groupStandings} pkt · Puchar: {user.points.knockout} pkt</span>
+                        <span>Ostatnio zdobyte: +{user.points.last} pkt</span>
                       </div>
                     </TD>
                   </TR>

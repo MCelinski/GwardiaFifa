@@ -11,12 +11,12 @@ The app has a complete premium dashboard UI and a backend foundation ready for S
 - Supabase SSR clients and middleware session refresh;
 - SQL schema with RLS privacy rules;
 - server actions for login/register/join league and saving predictions;
-- admin API routes for mock import, sync placeholder, and point recalculation;
+- admin API routes for official schedule import, results sync, and point recalculation;
 - real football-data.org sync endpoint wired for Vercel Cron;
 - static official schedule import with 104 World Cup 2026 fixtures from a football-data.org snapshot;
 - podium picks with the same lock deadline as group standings;
 - dashboard panel with today's matches that the current user can still predict;
-- mock fallback when Supabase env vars are not configured.
+- all pages read exclusively from Supabase (no mock data); empty states show until data is imported.
 
 ## Rules
 
@@ -30,7 +30,7 @@ The app has a complete premium dashboard UI and a backend foundation ready for S
 ## Supabase Setup
 
 1. Create a Supabase project.
-2. Run `supabase/migrations/0001_initial_schema.sql` in the Supabase SQL editor.
+2. Run every file in `supabase/migrations/` in order (`0001` … `0005`) in the Supabase SQL editor. `0005` fixes match scoring so the "goal difference" bonus is actually awarded.
 3. Copy `.env.example` to `.env.local` and fill:
 
 ```bash
@@ -49,19 +49,15 @@ FOOTBALL_DATA_SEASON=2026
 npm run dev
 ```
 
-5. Import mock league data:
-
-```bash
-curl -X POST http://localhost:3000/api/admin/import-mock -H "Authorization: Bearer YOUR_CRON_SECRET"
-```
-
-For production, prefer the static official schedule import:
+5. Import the official schedule (populates teams, groups, and all 104 fixtures):
 
 ```bash
 curl -X POST http://localhost:3000/api/admin/import-official-schedule -H "Authorization: Bearer YOUR_CRON_SECRET"
 ```
 
-`/api/admin/import-mock` is only for local UI/dev testing when football-data.org is unavailable.
+> Important: `SUPABASE_SECRET_KEY` must be a real Supabase **service_role / secret** key, not the
+> publishable key. Schedule import, results sync, and point recalculation use the admin client to
+> bypass RLS — with a publishable key in that slot those writes are silently rejected by RLS.
 
 ## Security Model
 

@@ -1,11 +1,10 @@
 import { BarChart3, CalendarClock, CircleDot, Medal, Shield, Trophy } from "lucide-react";
 import { getLeaderboard, type LeaderboardUser } from "@/lib/backend/leaderboard";
 import { getPrimaryLeague } from "@/lib/backend/league";
-import { dashboardStats as mockDashboardStats, groupMatches, groups, users } from "@/lib/mock-data";
 import { MATCH_LOCK_MINUTES } from "@/lib/rules";
-import { canUseSupabase, createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 import { formatWarsawDateTime } from "@/lib/time";
-import type { PredictionStatus } from "@/lib/mock-data";
+import type { PredictionStatus } from "@/lib/types";
 
 export type DashboardFixture = {
   id: string;
@@ -34,16 +33,6 @@ export type DashboardData = {
 };
 
 export async function getDashboardData(): Promise<DashboardData> {
-  if (!canUseSupabase()) {
-    return {
-      stats: mockDashboardStats,
-      missingPredictions: groupMatches.filter((match) => match.status === "draft").slice(0, 4).map(fromMockMatch),
-      nextMatches: groupMatches.slice(8, 14).map(fromMockMatch),
-      leaderboard: users,
-      draftGroupsCount: groups.filter((group) => group.status === "draft").length
-    };
-  }
-
   const supabase = await createClient();
   const league = await getPrimaryLeague();
   const { data: claims } = await supabase.auth.getClaims();
@@ -53,7 +42,7 @@ export async function getDashboardData(): Promise<DashboardData> {
     return emptyDashboard();
   }
 
-  const leaderboard = await getLeaderboard(league.id, { fallbackToMock: false });
+  const leaderboard = await getLeaderboard(league.id);
   const currentRank = Math.max(leaderboard.findIndex((user) => user.id === userId) + 1, 0);
   const currentUser = leaderboard.find((user) => user.id === userId);
   const now = new Date();
@@ -162,19 +151,6 @@ function fromDbFixture(fixture: any): DashboardFixture {
     date: formatWarsawDateTime(startsAt),
     deadline: formatWarsawDateTime(lockAt),
     status: mapFixtureStatus(fixture.status)
-  };
-}
-
-function fromMockMatch(match: (typeof groupMatches)[number]): DashboardFixture {
-  return {
-    id: match.id,
-    teamA: match.teamA,
-    teamB: match.teamB,
-    flagA: match.flagA,
-    flagB: match.flagB,
-    date: match.date,
-    deadline: match.deadline,
-    status: match.status
   };
 }
 

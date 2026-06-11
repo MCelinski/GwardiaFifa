@@ -1,5 +1,5 @@
 import { Badge } from "@/components/ui/badge";
-import type { PredictionStatus } from "@/lib/mock-data";
+import type { PredictionStatus } from "@/lib/types";
 
 const variants: Record<PredictionStatus, "gold" | "green" | "muted" | "red"> = {
   draft: "muted",

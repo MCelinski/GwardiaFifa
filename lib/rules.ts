@@ -32,9 +32,10 @@ export const rulesSummary = [
     title: "Punktacja meczow",
     items: [
       "Dokladny wynik: 5 pkt. To jest sztywny maks dla exact score.",
-      "Poprawny rezultat: 3 pkt.",
-      "Poprawna roznica bramek: 2 pkt.",
-      "Poprawna liczba goli jednej druzyny: 1 pkt."
+      "Poprawny rezultat (zwyciezca lub remis): 3 pkt.",
+      "Bonus za dokladna roznice bramek: +1 pkt.",
+      "Bonus za dokladna liczbe goli jednej druzyny: +1 pkt.",
+      "Bonusy sumuja sie z rezultatem, ale laczny wynik meczu nie przekroczy 5 pkt."
     ]
   },
   {
@@ -51,7 +52,7 @@ export const rulesSummary = [
     items: [
       "Dokladny wynik po 90 minutach: 5 pkt.",
       "Poprawny zwyciezca: 3 pkt.",
-      "Poprawna roznica bramek: 2 pkt.",
+      "Bonus za dokladna roznice bramek: +1 pkt (laczny wynik meczu maks 5 pkt).",
       "Poprawnie wskazany mistrz: 10 pkt.",
       "Poprawnie wskazane drugie miejsce: 6 pkt.",
       "Poprawnie wskazane trzecie miejsce: 4 pkt."

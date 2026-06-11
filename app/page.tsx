@@ -1,10 +1,9 @@
 "use client";
 
-import Link from "next/link";
 import { motion } from "framer-motion";
 import { Beer, Lock, Trophy } from "lucide-react";
 import { AuthJoinCard } from "@/components/AuthJoinCard";
-import { league } from "@/lib/mock-data";
+import { league } from "@/lib/league";
 import { GwardiaPiwoCrest } from "@/components/GwardiaPiwoCrest";
 import { Badge } from "@/components/ui/badge";
 
@@ -53,9 +52,6 @@ export default function JoinLeaguePage() {
           transition={{ delay: 0.1, duration: 0.5 }}
         >
           <AuthJoinCard />
-          <Link href="/dashboard" className="mx-auto mt-4 block max-w-md text-center text-sm text-muted-foreground hover:text-foam">
-            Preview dashboard without Supabase
-          </Link>
         </motion.div>
       </section>
     </main>

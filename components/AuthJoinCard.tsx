@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { LogIn, ShieldCheck, UserPlus } from "lucide-react";
 import { signInAction, signUpAction } from "@/app/actions/auth";
-import { league } from "@/lib/mock-data";
+import { league } from "@/lib/league";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";

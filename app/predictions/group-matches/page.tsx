@@ -1,17 +1,16 @@
-import { Save } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
+import { EmptyState } from "@/components/EmptyState";
 import { FriendsPredictionsModal } from "@/components/FriendsPredictionsModal";
 import { GroupMatchPredictionCard } from "@/components/GroupMatchPredictionCard";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { groupMatches, type PredictionStatus } from "@/lib/mock-data";
+import { getGroupStageMatches } from "@/lib/backend/predictions-view";
+import type { Match } from "@/lib/types";
 
-const filters: Array<"all" | PredictionStatus> = ["all", "draft", "saved", "locked", "live", "scored"];
+export default async function GroupMatchesPage() {
+  const matches = await getGroupStageMatches();
 
-export default function GroupMatchesPage() {
-  const grouped = groupMatches.reduce<Record<string, typeof groupMatches>>((acc, match) => {
-    const date = match.date.split(" ")[0];
+  const grouped = matches.reduce<Record<string, Match[]>>((acc, match) => {
+    const date = match.date.split(", ")[0];
     acc[date] = acc[date] ?? [];
     acc[date].push(match);
     return acc;
@@ -20,36 +19,25 @@ export default function GroupMatchesPage() {
   return (
     <AppShell>
       <div className="space-y-5">
-        <Header title="Group-stage match predictions" detail="All group-stage fixtures grouped by date and group. Each match locks 10 minutes before kickoff." />
+        <Header title="Group-stage match predictions" detail="All group-stage fixtures grouped by date. Each match locks 10 minutes before kickoff." />
 
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap gap-2">
-            {filters.map((filter) => (
-              <Badge key={filter} variant={filter === "all" ? "gold" : "muted"}>{filter === "draft" ? "missing" : filter}</Badge>
-            ))}
-          </div>
-          <div className="flex items-center gap-3">
-            <span className="text-sm text-emerald-300">Auto-save active · last saved 22 sec ago</span>
-            <Button>
-              <Save className="h-4 w-4" />
-              Save all predictions
-            </Button>
-          </div>
-        </div>
-
-        {Object.entries(grouped).map(([date, matches]) => (
-          <section key={date} className="space-y-3">
-            <div className="flex items-center justify-between rounded-lg border border-white/10 bg-white/6 px-4 py-3">
-              <h2 className="font-bold">{date}</h2>
-              <span className="text-sm text-muted-foreground">{matches.length} matches</span>
-            </div>
-            <div className="grid gap-3 xl:grid-cols-2">
-              {matches.map((match) => (
-                <GroupMatchPredictionCard key={match.id} match={match} />
-              ))}
-            </div>
-          </section>
-        ))}
+        {matches.length ? (
+          Object.entries(grouped).map(([date, dayMatches]) => (
+            <section key={date} className="space-y-3">
+              <div className="flex items-center justify-between rounded-lg border border-white/10 bg-white/6 px-4 py-3">
+                <h2 className="font-bold">{date}</h2>
+                <span className="text-sm text-muted-foreground">{dayMatches.length} matches</span>
+              </div>
+              <div className="grid gap-3 xl:grid-cols-2">
+                {dayMatches.map((match) => (
+                  <GroupMatchPredictionCard key={match.id} match={match} />
+                ))}
+              </div>
+            </section>
+          ))
+        ) : (
+          <EmptyState title="Brak meczow w terminarzu." detail="Admin musi zaimportowac oficjalny terminarz World Cup 2026." />
+        )}
 
         <Card>
           <CardContent className="flex flex-wrap items-center justify-between gap-3 p-5">

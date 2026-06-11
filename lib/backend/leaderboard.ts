@@ -1,5 +1,4 @@
-import { users as mockUsers } from "@/lib/mock-data";
-import { canUseSupabase, createClient } from "@/lib/supabase/server";
+import { createClient } from "@/lib/supabase/server";
 
 export type LeaderboardUser = {
   id: string;
@@ -17,14 +16,9 @@ export type LeaderboardUser = {
   };
 };
 
-export async function getLeaderboard(
-  leagueId?: string | null,
-  options: { fallbackToMock?: boolean } = {}
-): Promise<LeaderboardUser[]> {
-  const fallbackToMock = options.fallbackToMock ?? true;
-
-  if (!canUseSupabase() || !leagueId || leagueId === "mock-league") {
-    return mockUsers;
+export async function getLeaderboard(leagueId?: string | null): Promise<LeaderboardUser[]> {
+  if (!leagueId) {
+    return [];
   }
 
   const supabase = await createClient();
@@ -35,8 +29,7 @@ export async function getLeaderboard(
     .order("total_points", { ascending: false });
 
   if (error || !data?.length) {
-    if (!fallbackToMock) return [];
-    return mockUsers;
+    return [];
   }
 
   return data.map((row, index) => ({

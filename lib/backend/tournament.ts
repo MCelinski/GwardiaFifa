@@ -1,6 +1,6 @@
-import { groups, teams as mockTeams } from "@/lib/mock-data";
 import { getPrimaryLeague } from "@/lib/backend/league";
-import { canUseSupabase, createClient } from "@/lib/supabase/server";
+import { GROUP_STANDINGS_DEADLINE_LABEL } from "@/lib/rules";
+import { createClient } from "@/lib/supabase/server";
 
 export type TournamentPickTeam = {
   id: string;
@@ -23,22 +23,20 @@ export type TournamentPredictionState = {
 };
 
 export async function getTournamentPredictionState(): Promise<TournamentPredictionState> {
-  const fallback = {
-    leagueId: "mock-league",
-    teams: mockTeams.map((team) => ({ id: team.id, name: team.name, flag: team.flag })),
+  const empty: TournamentPredictionState = {
+    leagueId: "",
+    teams: [],
     prediction: null,
     locked: false,
-    deadlineLabel: groups[0]?.deadline ?? "11 czerwca 2026, 23:59"
+    deadlineLabel: GROUP_STANDINGS_DEADLINE_LABEL
   };
-
-  if (!canUseSupabase()) return fallback;
 
   const supabase = await createClient();
   const { data: claims } = await supabase.auth.getClaims();
   const userId = claims?.claims.sub;
   const league = await getPrimaryLeague();
 
-  if (!userId || !league?.id) return fallback;
+  if (!userId || !league?.id) return empty;
 
   const [{ data: teams }, { data: deadline }, { data: prediction }] = await Promise.all([
     supabase.from("teams").select("id, name, flag_code").order("name", { ascending: true }),
@@ -62,7 +60,7 @@ export async function getTournamentPredictionState(): Promise<TournamentPredicti
 
   return {
     leagueId: league.id,
-    teams: dbTeams.length ? dbTeams : fallback.teams,
+    teams: dbTeams,
     prediction: prediction
       ? {
           championTeamId: prediction.champion_team_id,
@@ -79,6 +77,6 @@ export async function getTournamentPredictionState(): Promise<TournamentPredicti
           timeStyle: "short",
           timeZone: "Europe/Warsaw"
         }).format(deadlineDate)
-      : fallback.deadlineLabel
+      : empty.deadlineLabel
   };
 }

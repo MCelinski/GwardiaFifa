@@ -1,0 +1,53 @@
+"use client";
+
+import { useState } from "react";
+import { Save } from "lucide-react";
+import type { GroupStandingPrediction, Team } from "@/lib/mock-data";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { StatusBadge } from "@/components/StatusBadge";
+import { DraggableTeamRow } from "@/components/DraggableTeamRow";
+
+export function GroupPredictionCard({ group }: { group: GroupStandingPrediction }) {
+  const [teams, setTeams] = useState<Team[]>(group.teams);
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const locked = ["locked", "scored"].includes(group.status);
+
+  function moveTeam(dropIndex: number) {
+    if (dragIndex === null || dragIndex === dropIndex || locked) return;
+    const next = [...teams];
+    const [moved] = next.splice(dragIndex, 1);
+    next.splice(dropIndex, 0, moved);
+    setTeams(next);
+    setDragIndex(null);
+  }
+
+  return (
+    <Card>
+      <CardHeader className="flex flex-row items-center justify-between gap-3">
+        <div>
+          <CardTitle>Group {group.group}</CardTitle>
+          <p className="mt-1 text-xs text-muted-foreground">Deadline {group.deadline}</p>
+        </div>
+        <StatusBadge status={group.status} />
+      </CardHeader>
+      <CardContent className="space-y-2">
+        {teams.map((team, index) => (
+          <DraggableTeamRow
+            key={team.id}
+            team={team}
+            position={index + 1}
+            draggable={!locked}
+            onDragStart={() => setDragIndex(index)}
+            onDragOver={(event) => event.preventDefault()}
+            onDrop={() => moveTeam(index)}
+          />
+        ))}
+        <Button className="mt-3 w-full" variant={locked ? "secondary" : "default"} disabled={locked}>
+          <Save className="h-4 w-4" />
+          {locked ? "Locked" : "Save group"}
+        </Button>
+      </CardContent>
+    </Card>
+  );
+}

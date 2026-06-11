@@ -1,0 +1,52 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+  --background: 222 42% 5%;
+  --foreground: 45 38% 94%;
+  --card: 222 35% 8%;
+  --card-foreground: 45 38% 94%;
+  --border: 220 18% 18%;
+  --muted: 220 20% 13%;
+  --muted-foreground: 220 10% 64%;
+  --primary: 42 66% 54%;
+  --primary-foreground: 222 42% 6%;
+  --accent: 151 63% 38%;
+  --accent-foreground: 45 38% 94%;
+  --destructive: 0 72% 51%;
+  --destructive-foreground: 45 38% 94%;
+}
+
+* {
+  border-color: hsl(var(--border));
+}
+
+html {
+  background: #05070d;
+}
+
+body {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at 16% 8%, rgba(214, 168, 61, 0.18), transparent 28rem),
+    radial-gradient(circle at 82% 14%, rgba(25, 164, 99, 0.13), transparent 24rem),
+    linear-gradient(180deg, #060914 0%, #05070d 44%, #030409 100%);
+  color: hsl(var(--foreground));
+  font-feature-settings: "rlig" 1, "calt" 1;
+}
+
+::selection {
+  background: rgba(214, 168, 61, 0.35);
+}
+
+@layer components {
+  .glass-panel {
+    @apply border border-white/10 bg-card/80 shadow-glow backdrop-blur-xl;
+  }
+
+  .pitch-panel {
+    @apply border border-emerald-400/15 bg-pitch-lines bg-[length:42px_42px];
+  }
+}

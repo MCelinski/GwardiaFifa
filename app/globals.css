@@ -25,10 +25,13 @@
 
 html {
   background: #05070d;
+  overflow-x: clip;
 }
 
 body {
-  min-height: 100vh;
+  min-height: 100dvh;
+  overflow-x: clip;
+  max-width: 100%;
   background:
     radial-gradient(circle at 16% 8%, rgba(214, 168, 61, 0.18), transparent 28rem),
     radial-gradient(circle at 82% 14%, rgba(25, 164, 99, 0.13), transparent 24rem),

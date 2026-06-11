@@ -19,11 +19,11 @@ export function LeaderboardTable({ users }: { users: User[] }) {
               <TH>Rank</TH>
               <TH>User</TH>
               <TH>Total</TH>
-              <TH>Group matches</TH>
-              <TH>Group standings</TH>
-              <TH>Knockout</TH>
-              <TH>Bonus</TH>
-              <TH>Last gained</TH>
+              <TH className="hidden md:table-cell">Group matches</TH>
+              <TH className="hidden md:table-cell">Group standings</TH>
+              <TH className="hidden md:table-cell">Knockout</TH>
+              <TH className="hidden md:table-cell">Bonus</TH>
+              <TH className="hidden md:table-cell">Last gained</TH>
               <TH />
             </TR>
           </THead>
@@ -42,11 +42,11 @@ export function LeaderboardTable({ users }: { users: User[] }) {
                     </div>
                   </TD>
                   <TD className="font-bold">{user.points.total}</TD>
-                  <TD>{user.points.groupMatches}</TD>
-                  <TD>{user.points.groupStandings}</TD>
-                  <TD>{user.points.knockout}</TD>
-                  <TD>{user.points.bonus}</TD>
-                  <TD className={user.points.last ? "text-emerald-300" : "text-muted-foreground"}>+{user.points.last}</TD>
+                  <TD className="hidden md:table-cell">{user.points.groupMatches}</TD>
+                  <TD className="hidden md:table-cell">{user.points.groupStandings}</TD>
+                  <TD className="hidden md:table-cell">{user.points.knockout}</TD>
+                  <TD className="hidden md:table-cell">{user.points.bonus}</TD>
+                  <TD className={`hidden md:table-cell ${user.points.last ? "text-emerald-300" : "text-muted-foreground"}`}>+{user.points.last}</TD>
                   <TD>
                     <Button
                       aria-label="Expand user history"

@@ -47,12 +47,12 @@ export function MatchScoreCard({
             <span className="text-xs uppercase text-muted-foreground">{contextLabel}</span>
           </div>
 
-          <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-3">
+          <div className="mt-5 grid grid-cols-[1fr_auto_1fr] items-center gap-2 sm:gap-3">
             <TeamBlock flag={flagA} name={teamA} align="right" />
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1.5 sm:gap-2">
               <Input
                 aria-label={`${teamA} score`}
-                className="h-11 w-12 text-center text-lg font-bold"
+                className="h-11 w-11 shrink-0 px-0 text-center text-lg font-bold sm:w-12"
                 defaultValue={prediction?.[0] ?? ""}
                 disabled={locked}
                 inputMode="numeric"
@@ -62,7 +62,7 @@ export function MatchScoreCard({
               <span className="text-muted-foreground">:</span>
               <Input
                 aria-label={`${teamB} score`}
-                className="h-11 w-12 text-center text-lg font-bold"
+                className="h-11 w-11 shrink-0 px-0 text-center text-lg font-bold sm:w-12"
                 defaultValue={prediction?.[1] ?? ""}
                 disabled={locked}
                 inputMode="numeric"
@@ -90,9 +90,9 @@ export function MatchScoreCard({
 
 function TeamBlock({ flag, name, align = "left" }: { flag?: string; name: string; align?: "left" | "right" }) {
   return (
-    <div className={`flex items-center gap-3 ${align === "right" ? "justify-end text-right" : ""}`}>
+    <div className={`flex min-w-0 items-center gap-2 sm:gap-3 ${align === "right" ? "justify-end text-right" : ""}`}>
       {align === "right" ? <span className="min-w-0 truncate text-sm font-semibold">{name}</span> : null}
-      {flag ? <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-white/10 bg-white/8 text-xs font-bold">{flag}</span> : null}
+      {flag ? <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-white/10 bg-white/8 text-[10px] font-bold">{flag}</span> : null}
       {align === "left" ? <span className="min-w-0 truncate text-sm font-semibold">{name}</span> : null}
     </div>
   );

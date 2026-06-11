@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Beer, Shield, UserCircle } from "lucide-react";
+import { Beer, Shield } from "lucide-react";
 import { league } from "@/lib/league";
 import { cn } from "@/lib/utils";
 import { GwardiaPiwoCrest } from "@/components/GwardiaPiwoCrest";
@@ -60,18 +60,14 @@ export function TopNav({ isAdmin = false }: { isAdmin?: boolean }) {
         </div>
       </div>
       <div className="border-t border-white/8 px-4 py-2 lg:hidden">
-        <div className="flex items-center justify-between text-xs text-muted-foreground">
-          <span className="flex items-center gap-1.5">
-            <Beer className="h-3.5 w-3.5 text-gold" />
-            {league.inviteCode}
+        <div className="flex items-center justify-between gap-2 text-xs text-muted-foreground">
+          <span className="flex min-w-0 items-center gap-1.5">
+            <Beer className="h-3.5 w-3.5 shrink-0 text-gold" />
+            <span className="truncate font-mono">{league.inviteCode}</span>
           </span>
-          <span className="flex items-center gap-1.5">
+          <span className="flex shrink-0 items-center gap-1.5">
             <Shield className="h-3.5 w-3.5 text-emerald-300" />
             Private
-          </span>
-          <span className="flex items-center gap-1.5">
-            <UserCircle className="h-3.5 w-3.5 text-foam" />
-            Gwardia
           </span>
         </div>
       </div>

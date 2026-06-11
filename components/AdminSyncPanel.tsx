@@ -10,11 +10,11 @@ import { EmptyState } from "@/components/EmptyState";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 
 const actions = [
-  { label: "Import official schedule", icon: Upload, endpoint: "/api/admin/import-official-schedule" },
-  { label: "Sync today's results", icon: RefreshCw, endpoint: "/api/admin/sync-results" },
-  { label: "Recalculate points", icon: Database, endpoint: "/api/admin/recalculate" },
-  { label: "Lock/unlock prediction window", icon: LockKeyhole },
-  { label: "Manage league invite code", icon: ShieldAlert }
+  { label: "Importuj oficjalny terminarz", icon: Upload, endpoint: "/api/admin/import-official-schedule" },
+  { label: "Synchronizuj dzisiejsze wyniki", icon: RefreshCw, endpoint: "/api/admin/sync-results" },
+  { label: "Przelicz punkty", icon: Database, endpoint: "/api/admin/recalculate" },
+  { label: "Zablokuj/odblokuj okno typowania", icon: LockKeyhole },
+  { label: "Zarządzaj kodem ligi", icon: ShieldAlert }
 ];
 
 export function AdminSyncPanel({ logs }: { logs: SyncLogRow[] }) {
@@ -48,7 +48,7 @@ export function AdminSyncPanel({ logs }: { logs: SyncLogRow[] }) {
         })}
         <Button variant="destructive" className="h-12 justify-start">
           <AlertTriangle className="h-4 w-4" />
-          Manually edit match result
+          Ręcznie edytuj wynik meczu
         </Button>
       </div>
 
@@ -58,7 +58,7 @@ export function AdminSyncPanel({ logs }: { logs: SyncLogRow[] }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Sync history logs</CardTitle>
+          <CardTitle>Historia synchronizacji</CardTitle>
         </CardHeader>
         <CardContent>
           {logs.length ? (
@@ -66,10 +66,10 @@ export function AdminSyncPanel({ logs }: { logs: SyncLogRow[] }) {
               <Table>
                 <THead>
                   <TR>
-                    <TH>Time</TH>
-                    <TH>Job</TH>
+                    <TH>Czas</TH>
+                    <TH>Zadanie</TH>
                     <TH>Status</TH>
-                    <TH>Detail</TH>
+                    <TH>Szczegóły</TH>
                   </TR>
                 </THead>
                 <TBody>

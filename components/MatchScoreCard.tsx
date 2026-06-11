@@ -1,5 +1,6 @@
 import { LockKeyhole, Save } from "lucide-react";
 import { saveMatchPredictionInlineFormAction } from "@/app/actions/predictions";
+import { Flag } from "@/components/Flag";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -92,7 +93,7 @@ function TeamBlock({ flag, name, align = "left" }: { flag?: string; name: string
   return (
     <div className={`flex min-w-0 items-center gap-2 sm:gap-3 ${align === "right" ? "justify-end text-right" : ""}`}>
       {align === "right" ? <span className="min-w-0 truncate text-sm font-semibold">{name}</span> : null}
-      {flag ? <span className="grid h-9 w-9 shrink-0 place-items-center rounded-md border border-white/10 bg-white/8 text-[10px] font-bold">{flag}</span> : null}
+      {flag ? <Flag code={flag} name={name} className="h-6 w-9" /> : null}
       {align === "left" ? <span className="min-w-0 truncate text-sm font-semibold">{name}</span> : null}
     </div>
   );

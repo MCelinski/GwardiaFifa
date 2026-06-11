@@ -17,16 +17,16 @@ function mapFixtureStatus(status: string): PredictionStatus {
 }
 
 const KNOCKOUT_ROUND_LABELS: Record<string, string> = {
-  LAST_32: "Round of 32",
-  LAST_16: "Round of 16",
-  QUARTER_FINALS: "Quarter-finals",
-  SEMI_FINALS: "Semi-finals",
-  THIRD_PLACE: "Third-place match",
-  FINAL: "Final"
+  LAST_32: "1/16 finału",
+  LAST_16: "1/8 finału",
+  QUARTER_FINALS: "Ćwierćfinał",
+  SEMI_FINALS: "Półfinał",
+  THIRD_PLACE: "Mecz o 3. miejsce",
+  FINAL: "Finał"
 };
 
 function knockoutRoundLabel(round: string | null): string {
-  if (!round) return "Knockout";
+  if (!round) return "Faza pucharowa";
   return KNOCKOUT_ROUND_LABELS[round.toUpperCase()] ?? round;
 }
 

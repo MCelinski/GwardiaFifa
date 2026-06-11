@@ -22,7 +22,7 @@ function readProfile(profiles: FriendMatchPrediction["profiles"]) {
 
 export function FriendsPredictionsModal({
   locked = true,
-  label = "View friends predictions",
+  label = "Typy znajomych",
   fixtureId,
   groupId
 }: {
@@ -65,7 +65,7 @@ export function FriendsPredictionsModal({
       <DialogContent>
         <DialogTitle className="text-xl font-bold">Typy znajomych</DialogTitle>
         <DialogDescription className="mt-1 text-sm text-muted-foreground">
-          Predictions are shown only when the match or group window is locked.
+          Typy są widoczne dopiero po zamknięciu okna typowania (start meczu lub deadline tabel).
         </DialogDescription>
         {locked ? (
           <div className="mt-5 space-y-3">
@@ -83,7 +83,7 @@ export function FriendsPredictionsModal({
                         <p className="text-sm text-muted-foreground">{prediction.score_a} : {prediction.score_b}</p>
                       </div>
                     </div>
-                    {prediction.points !== null ? <Badge variant="gold">{prediction.points} pts</Badge> : <Badge variant="muted">{prediction.status}</Badge>}
+                    {prediction.points !== null ? <Badge variant="gold">{prediction.points} pkt</Badge> : <Badge variant="muted">{prediction.status}</Badge>}
                   </div>
                 );
               })

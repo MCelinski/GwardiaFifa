@@ -12,35 +12,35 @@ export function TournamentPicksCard({ state }: { state: TournamentPredictionStat
     <Card className="border-gold/25">
       <CardHeader className="flex flex-row items-start justify-between gap-3">
         <div>
-          <CardTitle>Podium picks</CardTitle>
+          <CardTitle>Typy podium</CardTitle>
           <p className="mt-1 text-sm text-muted-foreground">
-            Pick only the final podium: champion, runner-up, and third place. Deadline: {state.deadlineLabel}.
+            Typujesz tylko podium: mistrz, wicemistrz i trzecie miejsce. Deadline: {state.deadlineLabel}.
           </p>
         </div>
         <Badge variant={state.locked ? "muted" : "gold"}>
           <Trophy className="h-3.5 w-3.5" />
-          {state.locked ? "locked" : "open"}
+          {state.locked ? "zamknięte" : "otwarte"}
         </Badge>
       </CardHeader>
       <CardContent>
         <form action={saveTournamentPredictionFormAction} className="grid gap-4 lg:grid-cols-[1fr_1fr_1fr_auto]">
           <input type="hidden" name="leagueId" value={state.leagueId} />
           <PickSelect
-            label="Champion"
+            label="Mistrz"
             name="championTeamId"
             teams={state.teams}
             defaultValue={state.prediction?.championTeamId ?? firstTeam}
             disabled={state.locked}
           />
           <PickSelect
-            label="Runner-up"
+            label="Wicemistrz"
             name="runnerUpTeamId"
             teams={state.teams}
             defaultValue={state.prediction?.runnerUpTeamId ?? state.teams[1]?.id ?? firstTeam}
             disabled={state.locked}
           />
           <PickSelect
-            label="Third place"
+            label="Trzecie miejsce"
             name="thirdPlaceTeamId"
             teams={state.teams}
             defaultValue={state.prediction?.thirdPlaceTeamId ?? state.teams[2]?.id ?? firstTeam}
@@ -49,18 +49,18 @@ export function TournamentPicksCard({ state }: { state: TournamentPredictionStat
           <div className="flex items-end">
             <Button className="w-full" disabled={state.locked || !state.teams.length}>
               <Save className="h-4 w-4" />
-              Save picks
+              Zapisz typy
             </Button>
           </div>
         </form>
         <div className="mt-4 flex flex-wrap items-center gap-3 text-sm text-muted-foreground">
           <span className="flex items-center gap-2">
             <Crown className="h-4 w-4 text-gold" />
-            Champion: 10 pts
+            Mistrz: 10 pkt
           </span>
-          <span>Runner-up: 6 pts</span>
-          <span>Third place: 4 pts</span>
-          {state.prediction ? <span>Saved status: {state.prediction.status}, points: {state.prediction.points}</span> : null}
+          <span>Wicemistrz: 6 pkt</span>
+          <span>Trzecie miejsce: 4 pkt</span>
+          {state.prediction ? <span>Zapisano: {state.prediction.points} pkt</span> : null}
         </div>
       </CardContent>
     </Card>
@@ -92,7 +92,7 @@ function PickSelect({
       >
         {teams.map((team) => (
           <option key={team.id} value={team.id}>
-            {team.flag} {team.name}
+            {team.name}
           </option>
         ))}
       </select>

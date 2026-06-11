@@ -12,12 +12,12 @@ export function LeagueCodeCard() {
           <div>
             <div className="flex items-center gap-2 text-sm font-semibold text-foam">
               <ShieldCheck className="h-4 w-4 text-gold" />
-              Private league code
+              Kod prywatnej ligi
             </div>
             <p className="mt-2 break-all font-mono text-lg font-bold text-primary">{league.inviteCode}</p>
-            <p className="mt-1 text-sm text-muted-foreground">Invite only for Gwardia Piwo friends.</p>
+            <p className="mt-1 text-sm text-muted-foreground">Tylko dla znajomych z Gwardia Piwo.</p>
           </div>
-          <Button aria-label="Copy invite code" size="icon" variant="secondary">
+          <Button aria-label="Kopiuj kod ligi" size="icon" variant="secondary">
             <Copy className="h-4 w-4" />
           </Button>
         </div>

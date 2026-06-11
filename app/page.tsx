@@ -20,7 +20,7 @@ export default function JoinLeaguePage() {
         >
           <Badge variant="gold">
             <Trophy className="h-3.5 w-3.5" />
-            Private World Cup 2026 league
+            Prywatna liga Mistrzostw Świata 2026
           </Badge>
           <div className="mt-8 flex items-center gap-5">
             <GwardiaPiwoCrest className="h-24 w-24" />
@@ -34,9 +34,9 @@ export default function JoinLeaguePage() {
           <p className="mt-6 max-w-2xl text-lg text-muted-foreground sm:text-xl">{league.subtitle}</p>
           <div className="mt-8 grid gap-3 sm:grid-cols-3">
             {[
-              ["Live leaderboard", Trophy],
-              ["Hidden picks before lock", Lock],
-              ["Beer-and-football prestige", Beer]
+              ["Tabela na żywo", Trophy],
+              ["Typy ukryte do locka", Lock],
+              ["Piwo i futbol – prestiż", Beer]
             ].map(([label, Icon]) => (
               <div key={label as string} className="rounded-lg border border-white/10 bg-white/6 p-4">
                 <Icon className="h-5 w-5 text-gold" />

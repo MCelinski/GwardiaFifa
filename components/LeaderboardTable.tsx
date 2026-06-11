@@ -16,14 +16,14 @@ export function LeaderboardTable({ users }: { users: User[] }) {
         <Table>
           <THead>
             <TR>
-              <TH>Rank</TH>
-              <TH>User</TH>
-              <TH>Total</TH>
-              <TH className="hidden md:table-cell">Group matches</TH>
-              <TH className="hidden md:table-cell">Group standings</TH>
-              <TH className="hidden md:table-cell">Knockout</TH>
+              <TH>Poz.</TH>
+              <TH>Gracz</TH>
+              <TH>Razem</TH>
+              <TH className="hidden md:table-cell">Mecze</TH>
+              <TH className="hidden md:table-cell">Tabele</TH>
+              <TH className="hidden md:table-cell">Puchar</TH>
               <TH className="hidden md:table-cell">Bonus</TH>
-              <TH className="hidden md:table-cell">Last gained</TH>
+              <TH className="hidden md:table-cell">Ostatnio</TH>
               <TH />
             </TR>
           </THead>

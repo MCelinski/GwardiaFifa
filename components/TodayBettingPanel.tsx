@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/EmptyState";
+import { Flag } from "@/components/Flag";
 import { Input } from "@/components/ui/input";
 
 export function TodayBettingPanel({ matches }: { matches: TodayBettableMatch[] }) {
@@ -71,7 +72,7 @@ export function TodayBettingPanel({ matches }: { matches: TodayBettableMatch[] }
 
                 <div className="mt-4 flex items-center justify-between gap-3 border-t border-white/8 pt-4">
                   <span className="text-sm text-muted-foreground">
-                    {match.prediction ? `Saved: ${match.prediction.scoreA}:${match.prediction.scoreB}` : "Brak typu"}
+                    {match.prediction ? `Zapisano: ${match.prediction.scoreA}:${match.prediction.scoreB}` : "Brak typu"}
                   </span>
                   <Button size="sm" variant={match.canPredict ? "default" : "secondary"} disabled={!match.canPredict}>
                     {match.canPredict ? <Save className="h-4 w-4" /> : <LockKeyhole className="h-4 w-4" />}
@@ -95,9 +96,9 @@ export function TodayBettingPanel({ matches }: { matches: TodayBettableMatch[] }
 function Team({ flag, name, right }: { flag: string; name: string; right?: boolean }) {
   return (
     <span className={`flex min-w-0 items-center gap-2 ${right ? "justify-end text-right" : ""}`}>
-      {!right ? <span className="grid h-8 w-8 place-items-center rounded bg-white/8 text-xs font-bold">{flag}</span> : null}
-      <span className="truncate text-sm font-semibold">{name}</span>
-      {right ? <span className="grid h-8 w-8 place-items-center rounded bg-white/8 text-xs font-bold">{flag}</span> : null}
+      {!right ? <Flag code={flag} name={name} className="h-6 w-8" /> : null}
+      <span className="min-w-0 truncate text-sm font-semibold">{name}</span>
+      {right ? <Flag code={flag} name={name} className="h-6 w-8" /> : null}
     </span>
   );
 }

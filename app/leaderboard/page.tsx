@@ -6,7 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { getLeaderboard } from "@/lib/backend/leaderboard";
 import { getPrimaryLeague } from "@/lib/backend/league";
 
-const filters = ["overall", "group matches", "group standings", "knockout stage", "today"];
+const filters = ["ogółem", "mecze grupowe", "tabele grup", "faza pucharowa", "dziś"];
 
 export default async function LeaderboardPage() {
   const league = await getPrimaryLeague();
@@ -16,9 +16,9 @@ export default async function LeaderboardPage() {
     <AppShell>
       <div className="space-y-5">
         <div>
-          <p className="text-sm font-semibold uppercase text-gold">Live ranking table</p>
-          <h1 className="mt-2 text-3xl font-black">Gwardia Piwo leaderboard</h1>
-          <p className="mt-2 text-muted-foreground">Live points for all friends with expandable point history.</p>
+          <p className="text-sm font-semibold uppercase text-gold">Ranking na żywo</p>
+          <h1 className="mt-2 text-3xl font-black">Tabela Gwardia Piwo</h1>
+          <p className="mt-2 text-muted-foreground">Punkty wszystkich graczy na żywo z rozwijaną historią.</p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-3">
@@ -39,7 +39,7 @@ export default async function LeaderboardPage() {
 
         <div className="flex flex-wrap gap-2">
           {filters.map((filter) => (
-            <Badge key={filter} variant={filter === "overall" ? "gold" : "muted"}>{filter}</Badge>
+            <Badge key={filter} variant={filter === "ogółem" ? "gold" : "muted"}>{filter}</Badge>
           ))}
         </div>
 

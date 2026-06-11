@@ -19,14 +19,14 @@ export default async function GroupMatchesPage() {
   return (
     <AppShell>
       <div className="space-y-5">
-        <Header title="Group-stage match predictions" detail="All group-stage fixtures grouped by date. Each match locks 10 minutes before kickoff." />
+        <Header title="Typy meczów fazy grupowej" detail="Wszystkie mecze fazy grupowej pogrupowane datami. Każdy typ zamyka się 10 minut przed pierwszym gwizdkiem." />
 
         {matches.length ? (
           Object.entries(grouped).map(([date, dayMatches]) => (
             <section key={date} className="space-y-3">
               <div className="flex items-center justify-between rounded-lg border border-white/10 bg-white/6 px-4 py-3">
                 <h2 className="font-bold">{date}</h2>
-                <span className="text-sm text-muted-foreground">{dayMatches.length} matches</span>
+                <span className="text-sm text-muted-foreground">{dayMatches.length} {dayMatches.length === 1 ? "mecz" : "meczów"}</span>
               </div>
               <div className="grid gap-3 xl:grid-cols-2">
                 {dayMatches.map((match) => (
@@ -41,8 +41,8 @@ export default async function GroupMatchesPage() {
 
         <Card>
           <CardContent className="flex flex-wrap items-center justify-between gap-3 p-5">
-            <p className="text-sm text-muted-foreground">Friends predictions become visible after kickoff. Editing locks 10 minutes before kickoff.</p>
-            <FriendsPredictionsModal locked label="Open locked match predictions" />
+            <p className="text-sm text-muted-foreground">Typy znajomych stają się widoczne po rozpoczęciu meczu. Edycja zamyka się 10 minut przed pierwszym gwizdkiem.</p>
+            <FriendsPredictionsModal locked label="Pokaż typy znajomych" />
           </CardContent>
         </Card>
       </div>

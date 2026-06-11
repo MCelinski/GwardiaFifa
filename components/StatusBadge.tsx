@@ -10,6 +10,15 @@ const variants: Record<PredictionStatus, "gold" | "green" | "muted" | "red"> = {
   scored: "green"
 };
 
+const labels: Record<PredictionStatus, string> = {
+  draft: "brak typu",
+  saved: "zapisany",
+  locked: "zamknięty",
+  hidden: "ukryty",
+  live: "na żywo",
+  scored: "rozliczony"
+};
+
 export function StatusBadge({ status }: { status: PredictionStatus }) {
-  return <Badge variant={variants[status]}>{status}</Badge>;
+  return <Badge variant={variants[status]}>{labels[status]}</Badge>;
 }

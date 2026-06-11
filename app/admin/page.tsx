@@ -19,15 +19,15 @@ export default async function AdminPage() {
     <AppShell>
       <div className="space-y-5">
         <div>
-          <p className="text-sm font-semibold uppercase text-gold">Admin only</p>
-          <h1 className="mt-2 text-3xl font-black">League operations</h1>
+          <p className="text-sm font-semibold uppercase text-gold">Tylko admin</p>
+          <h1 className="mt-2 text-3xl font-black">Operacje ligi</h1>
           <p className="mt-2 text-muted-foreground">
-            Import the official schedule, sync live results, and recalculate points. Destructive actions should be used with care.
+            Import oficjalnego terminarza, synchronizacja wyników na żywo i przeliczanie punktów. Operacji nieodwracalnych używaj ostrożnie.
           </p>
         </div>
         <DeadlineBanner>
           <ShieldAlert className="mr-2 inline h-4 w-4" />
-          These controls write to Supabase with the service role. Double-check before running result syncs or recalculations.
+          Te przyciski zapisują do Supabase z kluczem service role. Sprawdź dwa razy przed synchronizacją wyników lub przeliczeniem punktów.
         </DeadlineBanner>
         <AdminSyncPanel logs={logs} />
       </div>

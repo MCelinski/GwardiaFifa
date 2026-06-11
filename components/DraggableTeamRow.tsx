@@ -1,6 +1,7 @@
 "use client";
 
 import { ChevronDown, ChevronUp, GripVertical } from "lucide-react";
+import { Flag } from "@/components/Flag";
 import type { Team } from "@/lib/types";
 
 export function DraggableTeamRow({
@@ -37,7 +38,7 @@ export function DraggableTeamRow({
       className="grid grid-cols-[28px_32px_1fr_auto] items-center gap-2 rounded-md border border-white/8 bg-black/22 p-2 text-sm sm:gap-3"
     >
       <span className="grid h-7 w-7 place-items-center rounded bg-white/8 font-bold text-gold">{position}</span>
-      <span className="grid h-8 w-8 place-items-center rounded border border-white/10 bg-white/8 text-[11px] font-bold">{team.flag}</span>
+      <Flag code={team.flag} name={team.name} className="h-6 w-8" />
       <span className="flex min-w-0 items-center gap-2">
         <span className="min-w-0 truncate font-semibold">{team.name}</span>
         <span className="hidden shrink-0 text-xs text-muted-foreground sm:inline">FIFA #{team.fifaRank}</span>

@@ -15,14 +15,14 @@ export default async function FriendsPage() {
     <AppShell>
       <div className="space-y-5">
         <div>
-          <p className="text-sm font-semibold uppercase text-gold">Privacy-first predictions</p>
-          <h1 className="mt-2 text-3xl font-black">Friends predictions</h1>
-          <p className="mt-2 text-muted-foreground">Visible only after the match starts or the group deadline is locked.</p>
+          <p className="text-sm font-semibold uppercase text-gold">Najpierw prywatność</p>
+          <h1 className="mt-2 text-3xl font-black">Typy znajomych</h1>
+          <p className="mt-2 text-muted-foreground">Widoczne dopiero po rozpoczęciu meczu lub po upływie deadline&apos;u tabel grup.</p>
         </div>
 
         <Card>
           <CardHeader>
-            <CardTitle>Locked match predictions</CardTitle>
+            <CardTitle>Odsłonięte typy meczów</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-2">
             {lockedMatches.length ? (
@@ -30,7 +30,7 @@ export default async function FriendsPage() {
                 <div key={match.id} className="rounded-lg border border-white/8 bg-white/5 p-4">
                   <div className="flex items-center justify-between">
                     <StatusBadge status={match.status} />
-                    <Badge variant="green">visible</Badge>
+                    <Badge variant="green">widoczne</Badge>
                   </div>
                   <p className="mt-4 font-semibold">{match.teamA} vs {match.teamB}</p>
                   <p className="text-sm text-muted-foreground">{match.date}</p>
@@ -47,7 +47,7 @@ export default async function FriendsPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Group standings predictions</CardTitle>
+            <CardTitle>Typy tabel grup</CardTitle>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {groups.length ? (
@@ -58,7 +58,7 @@ export default async function FriendsPage() {
                     <StatusBadge status={group.status} />
                   </div>
                   {["locked", "scored"].includes(group.status) ? (
-                    <div className="mt-4"><FriendsPredictionsModal locked label="Show tables" groupId={group.group} /></div>
+                    <div className="mt-4"><FriendsPredictionsModal locked label="Pokaż tabele" groupId={group.group} /></div>
                   ) : (
                     <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
                       <EyeOff className="h-4 w-4" />

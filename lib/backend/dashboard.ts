@@ -76,39 +76,39 @@ export async function getDashboardData(): Promise<DashboardData> {
   return {
     stats: [
       {
-        label: "Current rank",
+        label: "Pozycja",
         value: currentRank ? `#${currentRank}` : "-",
-        detail: currentUser?.label ?? "Brak punktow",
+        detail: currentUser?.label ?? "Brak punktów",
         icon: Trophy
       },
       {
-        label: "Total points",
+        label: "Punkty łącznie",
         value: String(currentUser?.points.total ?? 0),
-        detail: `+${currentUser?.points.last ?? 0} today`,
+        detail: `+${currentUser?.points.last ?? 0} dziś`,
         icon: BarChart3
       },
       {
-        label: "Group match points",
+        label: "Punkty za mecze",
         value: String(currentUser?.points.groupMatches ?? 0),
-        detail: "Real fixtures from Supabase",
+        detail: "Mecze fazy grupowej",
         icon: CircleDot
       },
       {
-        label: "Group standings points",
+        label: "Punkty za tabele",
         value: String(currentUser?.points.groupStandings ?? 0),
-        detail: `${Math.max(0, 12 - draftGroupsCount)}/12 groups saved`,
+        detail: `${Math.max(0, 12 - draftGroupsCount)}/12 grup zapisanych`,
         icon: Shield
       },
       {
-        label: "Knockout points",
+        label: "Punkty za puchar",
         value: String(currentUser?.points.knockout ?? 0),
-        detail: "Match and podium picks",
+        detail: "Mecze i podium",
         icon: Medal
       },
       {
-        label: "Next prediction deadline",
+        label: "Najbliższy deadline",
         value: nextMatches[0]?.deadline.split(", ").at(-1) ?? "-",
-        detail: nextMatches[0] ? `${nextMatches[0].teamA} vs ${nextMatches[0].teamB}` : "No upcoming fixtures",
+        detail: nextMatches[0] ? `${nextMatches[0].teamA} vs ${nextMatches[0].teamB}` : "Brak nadchodzących meczów",
         icon: CalendarClock
       }
     ],
@@ -122,12 +122,12 @@ export async function getDashboardData(): Promise<DashboardData> {
 function emptyDashboard(): DashboardData {
   return {
     stats: [
-      { label: "Current rank", value: "-", detail: "Log in to join Gwardia Piwo", icon: Trophy },
-      { label: "Total points", value: "0", detail: "No profile loaded", icon: BarChart3 },
-      { label: "Group match points", value: "0", detail: "No predictions yet", icon: CircleDot },
-      { label: "Group standings points", value: "0", detail: "No groups saved", icon: Shield },
-      { label: "Knockout points", value: "0", detail: "No knockout picks", icon: Medal },
-      { label: "Next prediction deadline", value: "-", detail: "No fixtures loaded", icon: CalendarClock }
+      { label: "Pozycja", value: "-", detail: "Zaloguj się do Gwardia Piwo", icon: Trophy },
+      { label: "Punkty łącznie", value: "0", detail: "Brak profilu", icon: BarChart3 },
+      { label: "Punkty za mecze", value: "0", detail: "Brak typów", icon: CircleDot },
+      { label: "Punkty za tabele", value: "0", detail: "Brak zapisanych grup", icon: Shield },
+      { label: "Punkty za puchar", value: "0", detail: "Brak typów pucharowych", icon: Medal },
+      { label: "Najbliższy deadline", value: "-", detail: "Brak meczów", icon: CalendarClock }
     ],
     missingPredictions: [],
     nextMatches: [],

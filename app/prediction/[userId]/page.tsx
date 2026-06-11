@@ -8,9 +8,9 @@ export default async function PredictionDetailPage({ params }: { params: Promise
     <AppShell>
       <div className="space-y-5">
         <div>
-          <p className="text-sm font-semibold uppercase text-gold">Prediction detail</p>
-          <h1 className="mt-2 text-3xl font-black">User prediction breakdown</h1>
-          <p className="mt-2 text-muted-foreground">Accuracy, scoring categories, and point events timeline.</p>
+          <p className="text-sm font-semibold uppercase text-gold">Szczegóły typów</p>
+          <h1 className="mt-2 text-3xl font-black">Podsumowanie gracza</h1>
+          <p className="mt-2 text-muted-foreground">Punkty w kategoriach i historia zdobytych punktów.</p>
         </div>
         <PointsBreakdown userId={userId} />
       </div>

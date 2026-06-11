@@ -16,10 +16,10 @@ export default async function GroupStandingsPage() {
       <div className="space-y-5">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-sm font-semibold uppercase text-gold">12 groups · 48 teams</p>
-            <h1 className="mt-2 text-3xl font-black">Group final standings predictions</h1>
+            <p className="text-sm font-semibold uppercase text-gold">12 grup · 48 drużyn</p>
+            <h1 className="mt-2 text-3xl font-black">Typy końcowych tabel grup</h1>
             <p className="mt-2 max-w-2xl text-muted-foreground">
-              Drag teams from 1 to 4 and save the predicted final order for every group.
+              Ustaw drużyny od 1 do 4 (przeciągnij albo użyj strzałek) i zapisz przewidywaną kolejność w każdej grupie.
             </p>
           </div>
         </div>
@@ -39,16 +39,16 @@ export default async function GroupStandingsPage() {
         <Card>
           <CardContent className="flex flex-wrap items-center justify-between gap-3 p-5">
             <p className="text-sm text-muted-foreground">
-              Locked view unlocks all friends&apos; group standings predictions after deadline.
+              Typy tabel grup znajomych odsłaniają się dopiero po upływie deadline&apos;u.
             </p>
-            <FriendsPredictionsModal locked label="View locked group predictions" />
+            <FriendsPredictionsModal locked label="Pokaż typy znajomych" />
           </CardContent>
         </Card>
 
         <Card>
           <CardContent className="flex items-center gap-3 p-5 text-muted-foreground">
             <Eye className="h-5 w-5 text-gold" />
-            Before lock: Typy znajomych są ukryte do deadline&apos;u.
+            Przed deadline&apos;em typy znajomych są ukryte.
           </CardContent>
         </Card>
       </div>

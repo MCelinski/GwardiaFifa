@@ -2,6 +2,7 @@ import Link from "next/link";
 import { CalendarClock, ListChecks } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { EmptyState } from "@/components/EmptyState";
+import { Flag } from "@/components/Flag";
 import { LeagueCodeCard } from "@/components/LeagueCodeCard";
 import { StandingsProgressCard } from "@/components/StandingsProgressCard";
 import { StatCard } from "@/components/StatCard";
@@ -65,7 +66,7 @@ export default async function DashboardPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle>Mini leaderboard top 5</CardTitle>
+              <CardTitle>Mini tabela – top 5</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
               {dashboard.leaderboard.length ? (
@@ -92,7 +93,7 @@ export default async function DashboardPage() {
           <CardHeader className="flex flex-row items-center justify-between gap-3">
             <div>
               <CardTitle>Najblizsze mecze</CardTitle>
-              <p className="text-sm text-muted-foreground">Terminarz z Supabase po imporcie official schedule.</p>
+              <p className="text-sm text-muted-foreground">Najbliższe mecze z terminarza turnieju.</p>
             </div>
             <Button asChild variant="secondary">
               <Link href="/predictions/group-matches">
@@ -133,9 +134,9 @@ export default async function DashboardPage() {
 function Team({ flag, name, right }: { flag: string; name: string; right?: boolean }) {
   return (
     <span className={`flex min-w-0 items-center gap-2 ${right ? "justify-end text-right" : ""}`}>
-      {!right ? <span className="grid h-8 w-8 place-items-center rounded bg-white/8 text-xs font-bold">{flag}</span> : null}
-      <span className="truncate text-sm font-semibold">{name}</span>
-      {right ? <span className="grid h-8 w-8 place-items-center rounded bg-white/8 text-xs font-bold">{flag}</span> : null}
+      {!right ? <Flag code={flag} name={name} className="h-6 w-8" /> : null}
+      <span className="min-w-0 truncate text-sm font-semibold">{name}</span>
+      {right ? <Flag code={flag} name={name} className="h-6 w-8" /> : null}
     </span>
   );
 }

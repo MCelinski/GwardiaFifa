@@ -17,7 +17,7 @@ The app has a complete premium dashboard UI and a backend foundation ready for S
 - dashboard panel with today's matches that the current user can still predict;
 - mock fallback when Supabase env vars are not configured.
 
-## Rules
+## Ruless
 
 - Group final standings can be edited until `11 czerwca 2026, 23:59 Europe/Warsaw`.
 - Match predictions can be edited until 10 minutes before kickoff.

@@ -17,7 +17,12 @@ export type LeaderboardUser = {
   };
 };
 
-export async function getLeaderboard(leagueId?: string | null): Promise<LeaderboardUser[]> {
+export async function getLeaderboard(
+  leagueId?: string | null,
+  options: { fallbackToMock?: boolean } = {}
+): Promise<LeaderboardUser[]> {
+  const fallbackToMock = options.fallbackToMock ?? true;
+
   if (!canUseSupabase() || !leagueId || leagueId === "mock-league") {
     return mockUsers;
   }
@@ -30,6 +35,7 @@ export async function getLeaderboard(leagueId?: string | null): Promise<Leaderbo
     .order("total_points", { ascending: false });
 
   if (error || !data?.length) {
+    if (!fallbackToMock) return [];
     return mockUsers;
   }
 

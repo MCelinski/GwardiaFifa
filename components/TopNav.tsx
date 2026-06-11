@@ -2,8 +2,8 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Beer, Crown, Shield, Trophy, UserCircle } from "lucide-react";
-import { league, users } from "@/lib/mock-data";
+import { Beer, Shield, UserCircle } from "lucide-react";
+import { league } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
 import { GwardiaPiwoCrest } from "@/components/GwardiaPiwoCrest";
 import { Badge } from "@/components/ui/badge";
@@ -21,7 +21,6 @@ const navItems = [
 
 export function TopNav() {
   const pathname = usePathname();
-  const currentUser = users[0];
 
   return (
     <header className="sticky top-0 z-40 border-b border-white/10 bg-ink/85 backdrop-blur-xl">
@@ -51,15 +50,10 @@ export function TopNav() {
 
         <div className="flex items-center gap-3">
           <Badge variant="gold" className="hidden sm:inline-flex">
-            <Trophy className="h-3.5 w-3.5" />
-            {currentUser.points.total} pts
-          </Badge>
-          <Badge variant="green" className="hidden md:inline-flex">
-            <Crown className="h-3.5 w-3.5" />
-            Rank #1
+            {league.inviteCode}
           </Badge>
           <div className="flex h-9 w-9 items-center justify-center rounded-md border border-white/10 bg-white/8 text-xs font-bold">
-            {currentUser.avatar}
+            GP
           </div>
         </div>
       </div>
@@ -75,7 +69,7 @@ export function TopNav() {
           </span>
           <span className="flex items-center gap-1.5">
             <UserCircle className="h-3.5 w-3.5 text-foam" />
-            {currentUser.handle}
+            Gwardia
           </span>
         </div>
       </div>

@@ -27,6 +27,15 @@ const tournamentSchema = z.object({
   message: "Podium teams must be different."
 });
 
+function isMissingColumnError(error: unknown) {
+  return Boolean(
+    error &&
+      typeof error === "object" &&
+      "code" in error &&
+      (error as { code?: string }).code === "42703"
+  );
+}
+
 export async function saveMatchPredictionAction(input: z.input<typeof scoreSchema>) {
   const data = scoreSchema.parse(input);
   const supabase = await createClient();
@@ -166,7 +175,7 @@ export async function saveTournamentPredictionFormAction(formData: FormData) {
     throw new Error("Podium picks are locked.");
   }
 
-  const { error } = await supabase.from("tournament_predictions").upsert(
+  const payloads: Record<string, unknown>[] = [
     {
       league_id: data.leagueId,
       user_id: userId,
@@ -175,10 +184,28 @@ export async function saveTournamentPredictionFormAction(formData: FormData) {
       finalist_b_team_id: data.thirdPlaceTeamId,
       status: "saved"
     },
-    { onConflict: "league_id,user_id" }
-  );
+    {
+      league_id: data.leagueId,
+      user_id: userId,
+      champion_team_id: data.championTeamId,
+      runner_up_team_id: data.runnerUpTeamId,
+      third_place_team_id: data.thirdPlaceTeamId,
+      status: "saved"
+    }
+  ];
 
-  if (error) throw error;
+  let lastError: unknown = null;
+  for (const payload of payloads) {
+    const { error } = await supabase.from("tournament_predictions").upsert(payload, { onConflict: "league_id,user_id" });
+    if (!error) {
+      lastError = null;
+      break;
+    }
+    lastError = error;
+    if (!isMissingColumnError(error)) break;
+  }
+
+  if (lastError) throw lastError;
   revalidatePath("/predictions/knockout");
   revalidatePath("/dashboard");
   redirect("/predictions/knockout");

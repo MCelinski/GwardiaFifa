@@ -9,11 +9,21 @@ function pickTeam(value: unknown): { name: string | null; flag_code: string | nu
   return (value ?? null) as { name: string | null; flag_code: string | null } | null;
 }
 
-function mapFixtureStatus(status: string): PredictionStatus {
-  if (status === "finished") return "scored";
-  if (status === "live") return "live";
-  if (status === "locked") return "locked";
+// Status shown on a prediction card. Combines the feed status with the local
+// 10-minute lock window and whether the user already saved a pick, so the badge
+// and the edit button match what the server will actually allow.
+function resolveMatchStatus(fixtureStatus: string, lockAt: Date, now: Date, hasPrediction: boolean): PredictionStatus {
+  if (fixtureStatus === "finished") return "scored";
+  if (fixtureStatus === "live") return "live";
+  if (fixtureStatus === "locked" || now >= lockAt) return "locked";
+  if (hasPrediction) return "saved";
   return "draft";
+}
+
+// Friends' match picks are revealed at kickoff (not at the 10-minute edit lock),
+// per the league rules.
+function areFriendsPicksVisible(fixtureStatus: string, startsAt: Date, now: Date): boolean {
+  return now >= startsAt || fixtureStatus === "live" || fixtureStatus === "finished";
 }
 
 const KNOCKOUT_ROUND_LABELS: Record<string, string> = {
@@ -56,13 +66,15 @@ export async function getGroupStageMatches(): Promise<Match[]> {
 
   const predictionByFixture = new Map((predictions ?? []).map((row) => [row.fixture_id, row]));
 
+  const now = new Date();
+
   return (fixtures ?? []).map((fixture) => {
     const startsAt = new Date(fixture.starts_at);
     const lockAt = new Date(startsAt.getTime() - MATCH_LOCK_MINUTES * 60 * 1000);
-    const status = mapFixtureStatus(fixture.status);
     const teamA = pickTeam(fixture.team_a);
     const teamB = pickTeam(fixture.team_b);
     const prediction = predictionByFixture.get(fixture.id);
+    const status = resolveMatchStatus(fixture.status, lockAt, now, Boolean(prediction));
     const result =
       fixture.score_a !== null && fixture.score_b !== null
         ? ([fixture.score_a, fixture.score_b] as [number, number])
@@ -80,7 +92,7 @@ export async function getGroupStageMatches(): Promise<Match[]> {
       status,
       prediction: prediction ? [prediction.score_a, prediction.score_b] : undefined,
       result,
-      friendsVisible: ["locked", "live", "scored"].includes(status)
+      friendsVisible: areFriendsPicksVisible(fixture.status, startsAt, now)
     } satisfies Match;
   });
 }
@@ -153,25 +165,28 @@ export async function getKnockoutMatches(): Promise<KnockoutMatch[]> {
   ]);
 
   const predictionByFixture = new Map((predictions ?? []).map((row) => [row.fixture_id, row]));
+  const now = new Date();
 
   return (fixtures ?? [])
     .map((fixture) => {
-      const status = mapFixtureStatus(fixture.status);
+      const startsAt = new Date(fixture.starts_at);
+      const lockAt = new Date(startsAt.getTime() - MATCH_LOCK_MINUTES * 60 * 1000);
       const teamA = pickTeam(fixture.team_a);
       const teamB = pickTeam(fixture.team_b);
       const prediction = predictionByFixture.get(fixture.id);
+      const status = resolveMatchStatus(fixture.status, lockAt, now, Boolean(prediction));
 
       return {
         knownTeams: Boolean(teamA?.name && teamB?.name),
         match: {
           id: fixture.id,
           round: knockoutRoundLabel(fixture.round),
-          date: formatWarsawDateTime(new Date(fixture.starts_at)),
+          date: formatWarsawDateTime(startsAt),
           teamA: teamA?.name ?? fixture.placeholder_a ?? "TBD",
           teamB: teamB?.name ?? fixture.placeholder_b ?? "TBD",
           status,
           prediction: prediction ? ([prediction.score_a, prediction.score_b] as [number, number]) : undefined,
-          friendsVisible: ["locked", "live", "scored"].includes(status)
+          friendsVisible: areFriendsPicksVisible(fixture.status, startsAt, now)
         } satisfies KnockoutMatch
       };
     })

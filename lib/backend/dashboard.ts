@@ -15,6 +15,7 @@ export type DashboardFixture = {
   date: string;
   deadline: string;
   status: PredictionStatus;
+  prediction?: [number, number];
 };
 
 export type DashboardStat = {
@@ -56,22 +57,25 @@ export async function getDashboardData(): Promise<DashboardData> {
         .gte("starts_at", now.toISOString())
         .order("starts_at", { ascending: true })
         .limit(18),
-      supabase.from("match_predictions").select("fixture_id").eq("user_id", userId),
+      supabase.from("match_predictions").select("fixture_id, score_a, score_b").eq("user_id", userId),
       supabase.from("world_cup_groups").select("id, status"),
       supabase.from("group_standing_predictions").select("group_id").eq("user_id", userId)
     ]);
 
-  const predictionFixtureIds = new Set((userPredictions ?? []).map((prediction) => prediction.fixture_id));
+  const predictionByFixture = new Map((userPredictions ?? []).map((prediction) => [prediction.fixture_id, prediction]));
+  const predictionFixtureIds = new Set(predictionByFixture.keys());
   const predictedGroupIds = new Set((groupPredictions ?? []).map((prediction) => prediction.group_id));
 
   const missingPredictions = (upcomingFixtures ?? [])
     .filter((fixture) => !predictionFixtureIds.has(fixture.id))
     .filter((fixture) => new Date(fixture.starts_at).getTime() - MATCH_LOCK_MINUTES * 60 * 1000 > now.getTime())
     .slice(0, 4)
-    .map(fromDbFixture);
+    .map((fixture) => fromDbFixture(fixture, predictionByFixture.get(fixture.id), now));
 
   const draftGroupsCount = (groupRows ?? []).filter((group) => !predictedGroupIds.has(group.id)).length;
-  const nextMatches = (upcomingFixtures ?? []).slice(0, 6).map(fromDbFixture);
+  const nextMatches = (upcomingFixtures ?? [])
+    .slice(0, 6)
+    .map((fixture) => fromDbFixture(fixture, predictionByFixture.get(fixture.id), now));
 
   return {
     stats: [
@@ -136,7 +140,11 @@ function emptyDashboard(): DashboardData {
   };
 }
 
-function fromDbFixture(fixture: any): DashboardFixture {
+function fromDbFixture(
+  fixture: any,
+  prediction: { score_a: number; score_b: number } | undefined,
+  now: Date
+): DashboardFixture {
   const startsAt = new Date(fixture.starts_at);
   const lockAt = new Date(startsAt.getTime() - MATCH_LOCK_MINUTES * 60 * 1000);
   const teamA = Array.isArray(fixture.team_a) ? fixture.team_a[0] : fixture.team_a;
@@ -150,13 +158,19 @@ function fromDbFixture(fixture: any): DashboardFixture {
     flagB: teamB?.flag_code ?? "B",
     date: formatWarsawDateTime(startsAt),
     deadline: formatWarsawDateTime(lockAt),
-    status: mapFixtureStatus(fixture.status)
+    status: resolveStatus(fixture.status, lockAt, now, Boolean(prediction)),
+    prediction: prediction ? [prediction.score_a, prediction.score_b] : undefined
   };
 }
 
-function mapFixtureStatus(status: string): PredictionStatus {
-  if (status === "finished") return "scored";
-  if (status === "live") return "live";
-  if (status === "locked") return "locked";
+// Combines the football-data fixture status with the local lock window and the
+// user's own prediction so the badge reflects what the user actually sees:
+// scored/live come from the feed, a passed lock shows "locked", a saved pick
+// shows "saved", otherwise it's an open match with no pick yet ("draft").
+function resolveStatus(fixtureStatus: string, lockAt: Date, now: Date, hasPrediction: boolean): PredictionStatus {
+  if (fixtureStatus === "finished") return "scored";
+  if (fixtureStatus === "live") return "live";
+  if (fixtureStatus === "locked" || now >= lockAt) return "locked";
+  if (hasPrediction) return "saved";
   return "draft";
 }

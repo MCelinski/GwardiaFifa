@@ -1,4 +1,4 @@
-import { Clock, LockKeyhole, Save } from "lucide-react";
+import { Clock, LockKeyhole, Pencil, Save } from "lucide-react";
 import { saveMatchPredictionFormAction } from "@/app/actions/predictions";
 import type { TodayBettableMatch } from "@/lib/backend/fixtures";
 import { MATCH_LOCK_MINUTES } from "@/lib/rules";
@@ -75,8 +75,14 @@ export function TodayBettingPanel({ matches }: { matches: TodayBettableMatch[] }
                     {match.prediction ? `Zapisano: ${match.prediction.scoreA}:${match.prediction.scoreB}` : "Brak typu"}
                   </span>
                   <Button size="sm" variant={match.canPredict ? "default" : "secondary"} disabled={!match.canPredict}>
-                    {match.canPredict ? <Save className="h-4 w-4" /> : <LockKeyhole className="h-4 w-4" />}
-                    {match.canPredict ? "Zapisz typ" : "Zamknięte"}
+                    {!match.canPredict ? (
+                      <LockKeyhole className="h-4 w-4" />
+                    ) : match.prediction ? (
+                      <Pencil className="h-4 w-4" />
+                    ) : (
+                      <Save className="h-4 w-4" />
+                    )}
+                    {!match.canPredict ? "Zamknięte" : match.prediction ? "Edytuj typ" : "Zapisz typ"}
                   </Button>
                 </div>
               </form>

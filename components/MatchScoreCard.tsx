@@ -1,4 +1,4 @@
-import { LockKeyhole, Save } from "lucide-react";
+import { LockKeyhole, Pencil, Save } from "lucide-react";
 import { saveMatchPredictionInlineFormAction } from "@/app/actions/predictions";
 import { Flag } from "@/components/Flag";
 import { Badge } from "@/components/ui/badge";
@@ -79,8 +79,14 @@ export function MatchScoreCard({
               {prediction ? `Zapisany typ: ${prediction[0]}:${prediction[1]}` : "Brak typu"}
             </span>
             <Button size="sm" variant={locked ? "secondary" : "default"} disabled={locked}>
-              {locked ? <LockKeyhole className="h-4 w-4" /> : <Save className="h-4 w-4" />}
-              {locked ? "Zamknięte" : "Zapisz typ"}
+              {locked ? (
+                <LockKeyhole className="h-4 w-4" />
+              ) : prediction ? (
+                <Pencil className="h-4 w-4" />
+              ) : (
+                <Save className="h-4 w-4" />
+              )}
+              {locked ? "Zamknięte" : prediction ? "Edytuj typ" : "Zapisz typ"}
             </Button>
           </div>
         </form>

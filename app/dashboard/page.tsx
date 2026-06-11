@@ -115,6 +115,13 @@ export default async function DashboardPage() {
                     <span className="text-muted-foreground">vs</span>
                     <Team flag={match.flagB} name={match.teamB} right />
                   </div>
+                  <p className="mt-3 border-t border-white/8 pt-3 text-center text-sm">
+                    {match.prediction ? (
+                      <span className="font-semibold text-gold">Twój typ: {match.prediction[0]}:{match.prediction[1]}</span>
+                    ) : (
+                      <span className="text-muted-foreground">Brak typu</span>
+                    )}
+                  </p>
                 </div>
               ))
             ) : (

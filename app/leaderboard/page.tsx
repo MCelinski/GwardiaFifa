@@ -3,11 +3,15 @@ import { AppShell } from "@/components/AppShell";
 import { LeaderboardTable } from "@/components/LeaderboardTable";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
-import { users } from "@/lib/mock-data";
+import { getLeaderboard } from "@/lib/backend/leaderboard";
+import { getPrimaryLeague } from "@/lib/backend/league";
 
 const filters = ["overall", "group matches", "group standings", "knockout stage", "today"];
 
-export default function LeaderboardPage() {
+export default async function LeaderboardPage() {
+  const league = await getPrimaryLeague();
+  const users = await getLeaderboard(league?.id);
+
   return (
     <AppShell>
       <div className="space-y-5">

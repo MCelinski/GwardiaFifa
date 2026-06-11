@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { signInAction, signUpAction } from "@/app/actions/auth";
 
 export default function JoinLeaguePage() {
   return (
@@ -65,27 +66,33 @@ export default function JoinLeaguePage() {
                   <span className="text-sm font-medium">Email</span>
                   <div className="relative">
                     <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                    <Input className="pl-9" placeholder="you@gwardia.pl" type="email" />
+                    <Input className="pl-9" name="email" placeholder="you@gwardia.pl" type="email" />
                   </div>
                 </label>
                 <label className="block space-y-2">
                   <span className="text-sm font-medium">Password</span>
-                  <Input placeholder="••••••••" type="password" />
+                  <Input name="password" placeholder="••••••••" type="password" />
+                </label>
+                <label className="block space-y-2">
+                  <span className="text-sm font-medium">Display name</span>
+                  <Input name="displayName" placeholder="Marek z Gwardii" />
                 </label>
                 <label className="block space-y-2">
                   <span className="text-sm font-medium">League invite code</span>
-                  <Input className="border-gold/40 bg-gold/10 font-mono text-primary" defaultValue={league.inviteCode} />
+                  <Input name="inviteCode" className="border-gold/40 bg-gold/10 font-mono text-primary" defaultValue={league.inviteCode} />
                 </label>
-                <Button asChild className="w-full">
-                  <Link href="/dashboard">
-                    <ShieldCheck className="h-4 w-4" />
-                    Dołącz do ligi
-                  </Link>
-                </Button>
                 <div className="grid grid-cols-2 gap-3">
-                  <Button type="button" variant="secondary">Login</Button>
-                  <Button type="button" variant="secondary">Register</Button>
+                  <Button formAction={signInAction} variant="secondary">
+                    Login
+                  </Button>
+                  <Button formAction={signUpAction}>
+                    <ShieldCheck className="h-4 w-4" />
+                    Register
+                  </Button>
                 </div>
+                <Button asChild className="w-full" variant="ghost">
+                  <Link href="/dashboard">Preview dashboard without Supabase</Link>
+                </Button>
               </form>
             </CardContent>
           </Card>

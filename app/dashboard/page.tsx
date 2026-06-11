@@ -4,6 +4,7 @@ import { AppShell } from "@/components/AppShell";
 import { EmptyState } from "@/components/EmptyState";
 import { Flag } from "@/components/Flag";
 import { LeagueCodeCard } from "@/components/LeagueCodeCard";
+import { MatchHistoryModal } from "@/components/MatchHistoryModal";
 import { StandingsProgressCard } from "@/components/StandingsProgressCard";
 import { StatCard } from "@/components/StatCard";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -90,17 +91,20 @@ export default async function DashboardPage() {
         </div>
 
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between gap-3">
+          <CardHeader className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle>Najblizsze mecze</CardTitle>
               <p className="text-sm text-muted-foreground">Najbliższe mecze z terminarza turnieju.</p>
             </div>
-            <Button asChild variant="secondary">
-              <Link href="/predictions/group-matches">
-                <CalendarClock className="h-4 w-4" />
-                Otworz mecze
-              </Link>
-            </Button>
+            <div className="flex flex-wrap gap-2">
+              <MatchHistoryModal />
+              <Button asChild variant="secondary">
+                <Link href="/predictions/group-matches">
+                  <CalendarClock className="h-4 w-4" />
+                  Otworz mecze
+                </Link>
+              </Button>
+            </div>
           </CardHeader>
           <CardContent className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
             {dashboard.nextMatches.length ? (

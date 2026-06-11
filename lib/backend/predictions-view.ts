@@ -35,7 +35,7 @@ const KNOCKOUT_ROUND_LABELS: Record<string, string> = {
   FINAL: "Finał"
 };
 
-function knockoutRoundLabel(round: string | null): string {
+export function knockoutRoundLabel(round: string | null): string {
   if (!round) return "Faza pucharowa";
   return KNOCKOUT_ROUND_LABELS[round.toUpperCase()] ?? round;
 }

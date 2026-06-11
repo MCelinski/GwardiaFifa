@@ -14,7 +14,7 @@ The app has a complete premium dashboard UI and a backend foundation ready for S
 - admin API routes for mock import, sync placeholder, and point recalculation;
 - real football-data.org sync endpoint wired for Vercel Cron;
 - full tournament schedule import from football-data.org for `2026-06-11` through `2026-07-19`;
-- champion/finalist picks with the same lock deadline as group standings;
+- podium picks with the same lock deadline as group standings;
 - dashboard panel with today's matches that the current user can still predict;
 - mock fallback when Supabase env vars are not configured.
 
@@ -22,7 +22,7 @@ The app has a complete premium dashboard UI and a backend foundation ready for S
 
 - Group final standings can be edited until `11 czerwca 2026, 23:59 Europe/Warsaw`.
 - Match predictions can be edited until 10 minutes before kickoff.
-- Champion and finalist picks lock together with group standings.
+- Podium picks lock together with group standings.
 - Friends' match predictions become visible only after that match starts.
 - Friends' group standings predictions become visible only after the group deadline.
 - Users can always see their own predictions.
@@ -69,7 +69,7 @@ The database enforces lock rules with RLS:
 
 - match insert/update is allowed only when `fixtures.starts_at - interval '10 minutes' > now()`;
 - group standings insert/update is allowed only before `world_cup_groups.standings_deadline`;
-- champion/finalist insert/update is allowed only before `world_cup_groups.standings_deadline`;
+- podium insert/update is allowed only before `world_cup_groups.standings_deadline`;
 - friends' predictions are hidden by RLS until the visibility deadline;
 - admin endpoints use `CRON_SECRET` and server-side Supabase secret key.
 

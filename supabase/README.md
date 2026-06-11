@@ -45,8 +45,8 @@ RLS enforces:
 - users can always see their own predictions;
 - match predictions by friends become visible only when `fixtures.starts_at <= now()`;
 - group standings predictions by friends become visible only when `world_cup_groups.standings_deadline <= now()`;
-- champion/finalist predictions by friends become visible only after the group standings deadline;
+- podium predictions by friends become visible only after the group standings deadline;
 - users can create/update match predictions only until 10 minutes before kickoff;
 - users can create/update group standings until `2026-06-11 23:59:59 Europe/Warsaw`;
-- users can create/update champion/finalist picks until `2026-06-11 23:59:59 Europe/Warsaw`;
+- users can create/update podium picks until `2026-06-11 23:59:59 Europe/Warsaw`;
 - admin operations require the server-side secret key.

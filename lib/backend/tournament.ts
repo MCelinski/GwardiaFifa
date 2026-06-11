@@ -13,8 +13,8 @@ export type TournamentPredictionState = {
   teams: TournamentPickTeam[];
   prediction: {
     championTeamId: string | null;
-    finalistATeamId: string | null;
-    finalistBTeamId: string | null;
+    runnerUpTeamId: string | null;
+    thirdPlaceTeamId: string | null;
     points: number;
     status: string;
   } | null;
@@ -45,7 +45,7 @@ export async function getTournamentPredictionState(): Promise<TournamentPredicti
     supabase.from("world_cup_groups").select("standings_deadline").order("standings_deadline", { ascending: true }).limit(1).single(),
     supabase
       .from("tournament_predictions")
-      .select("champion_team_id, finalist_a_team_id, finalist_b_team_id, points, status")
+      .select("champion_team_id, runner_up_team_id, third_place_team_id, points, status")
       .eq("league_id", league.id)
       .eq("user_id", userId)
       .maybeSingle()
@@ -66,8 +66,8 @@ export async function getTournamentPredictionState(): Promise<TournamentPredicti
     prediction: prediction
       ? {
           championTeamId: prediction.champion_team_id,
-          finalistATeamId: prediction.finalist_a_team_id,
-          finalistBTeamId: prediction.finalist_b_team_id,
+          runnerUpTeamId: prediction.runner_up_team_id,
+          thirdPlaceTeamId: prediction.third_place_team_id,
           points: prediction.points,
           status: prediction.status
         }

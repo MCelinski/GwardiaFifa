@@ -15,7 +15,7 @@ export const rulesSummary = [
     title: "Deadline typow",
     items: [
       `Koncowe tabele grup mozna ustawic do ${GROUP_STANDINGS_DEADLINE_LABEL}.`,
-      `Typ mistrza i finalistow zamyka sie razem z tabelami grup: ${GROUP_STANDINGS_DEADLINE_LABEL}.`,
+      `Typ podium (mistrz, drugie miejsce, trzecie miejsce) zamyka sie razem z tabelami grup: ${GROUP_STANDINGS_DEADLINE_LABEL}.`,
       `Wynik meczu mozna typowac i edytowac najpozniej ${MATCH_LOCK_MINUTES} minut przed pierwszym gwizdkiem.`,
       "Po zamknieciu okna typowania aplikacja i baza danych blokuja zapis lub edycje typu."
     ]
@@ -25,7 +25,7 @@ export const rulesSummary = [
     items: [
       "Przed lockiem widzisz tylko wlasne typy.",
       "Typy meczowe znajomych pokazuja sie dopiero po rozpoczeciu danego meczu.",
-      "Typy koncowych tabel grup oraz mistrza/finalistow pokazuja sie dopiero po deadline tabel grup."
+      "Typy koncowych tabel grup oraz podium pokazuja sie dopiero po deadline tabel grup."
     ]
   },
   {
@@ -53,7 +53,8 @@ export const rulesSummary = [
       "Poprawny zwyciezca: 3 pkt.",
       "Poprawna roznica bramek: 2 pkt.",
       "Poprawnie wskazany mistrz: 10 pkt.",
-      "Poprawnie wskazany finalista: 6 pkt za kazdego finaliste."
+      "Poprawnie wskazane drugie miejsce: 6 pkt.",
+      "Poprawnie wskazane trzecie miejsce: 4 pkt."
     ]
   }
 ];

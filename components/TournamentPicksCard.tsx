@@ -12,9 +12,9 @@ export function TournamentPicksCard({ state }: { state: TournamentPredictionStat
     <Card className="border-gold/25">
       <CardHeader className="flex flex-row items-start justify-between gap-3">
         <div>
-          <CardTitle>Champion and finalist picks</CardTitle>
+          <CardTitle>Podium picks</CardTitle>
           <p className="mt-1 text-sm text-muted-foreground">
-            Pick the champion and both finalists. Deadline: {state.deadlineLabel}.
+            Pick only the final podium: champion, runner-up, and third place. Deadline: {state.deadlineLabel}.
           </p>
         </div>
         <Badge variant={state.locked ? "muted" : "gold"}>
@@ -33,17 +33,17 @@ export function TournamentPicksCard({ state }: { state: TournamentPredictionStat
             disabled={state.locked}
           />
           <PickSelect
-            label="Finalist 1"
-            name="finalistATeamId"
+            label="Runner-up"
+            name="runnerUpTeamId"
             teams={state.teams}
-            defaultValue={state.prediction?.finalistATeamId ?? firstTeam}
+            defaultValue={state.prediction?.runnerUpTeamId ?? state.teams[1]?.id ?? firstTeam}
             disabled={state.locked}
           />
           <PickSelect
-            label="Finalist 2"
-            name="finalistBTeamId"
+            label="Third place"
+            name="thirdPlaceTeamId"
             teams={state.teams}
-            defaultValue={state.prediction?.finalistBTeamId ?? state.teams[1]?.id ?? firstTeam}
+            defaultValue={state.prediction?.thirdPlaceTeamId ?? state.teams[2]?.id ?? firstTeam}
             disabled={state.locked}
           />
           <div className="flex items-end">
@@ -58,7 +58,8 @@ export function TournamentPicksCard({ state }: { state: TournamentPredictionStat
             <Crown className="h-4 w-4 text-gold" />
             Champion: 10 pts
           </span>
-          <span>Each finalist: 6 pts</span>
+          <span>Runner-up: 6 pts</span>
+          <span>Third place: 4 pts</span>
           {state.prediction ? <span>Saved status: {state.prediction.status}, points: {state.prediction.points}</span> : null}
         </div>
       </CardContent>

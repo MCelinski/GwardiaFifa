@@ -284,7 +284,7 @@ export const scoringRules = [
   {
     title: "Knockout prediction",
     icon: Trophy,
-    rules: ["exact score after 90 minutes: 5", "correct winner: 3", "correct goal difference: 2", "champion: 10", "finalist: 6"]
+    rules: ["exact score after 90 minutes: 5", "correct winner: 3", "correct goal difference: 2", "champion: 10", "runner-up: 6", "third place: 4"]
   }
 ];
 

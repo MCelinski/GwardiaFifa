@@ -20,11 +20,11 @@ export default async function KnockoutPage() {
             <p className="text-sm font-semibold uppercase text-gold">Bracket predictions</p>
             <h1 className="mt-2 text-3xl font-black">Knockout predictions</h1>
             <p className="mt-2 max-w-2xl text-muted-foreground">
-              Predict scores and winners from Round of 32 through the final. Unknown teams stay as bracket placeholders.
+              Predict knockout match scores only when fixtures are known. Before the tournament, pick only the final podium.
             </p>
           </div>
           <div className="flex items-center gap-3">
-            <Badge variant="muted">Teams update after group scoring</Badge>
+            <Badge variant="muted">Match picks unlock when teams are known</Badge>
             <Button>
               <Save className="h-4 w-4" />
               Save bracket

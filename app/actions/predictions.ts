@@ -21,12 +21,10 @@ const groupSchema = z.object({
 const tournamentSchema = z.object({
   leagueId: z.string().uuid(),
   championTeamId: z.string().uuid(),
-  finalistATeamId: z.string().uuid(),
-  finalistBTeamId: z.string().uuid()
-}).refine((data) => data.finalistATeamId !== data.finalistBTeamId, {
-  message: "Finalists must be two different teams."
-}).refine((data) => data.championTeamId === data.finalistATeamId || data.championTeamId === data.finalistBTeamId, {
-  message: "Champion must be one of the finalists."
+  runnerUpTeamId: z.string().uuid(),
+  thirdPlaceTeamId: z.string().uuid()
+}).refine((data) => new Set([data.championTeamId, data.runnerUpTeamId, data.thirdPlaceTeamId]).size === 3, {
+  message: "Podium teams must be different."
 });
 
 export async function saveMatchPredictionAction(input: z.input<typeof scoreSchema>) {
@@ -134,8 +132,8 @@ export async function saveTournamentPredictionFormAction(formData: FormData) {
   const data = tournamentSchema.parse({
     leagueId: String(formData.get("leagueId") ?? ""),
     championTeamId: String(formData.get("championTeamId") ?? ""),
-    finalistATeamId: String(formData.get("finalistATeamId") ?? ""),
-    finalistBTeamId: String(formData.get("finalistBTeamId") ?? "")
+    runnerUpTeamId: String(formData.get("runnerUpTeamId") ?? ""),
+    thirdPlaceTeamId: String(formData.get("thirdPlaceTeamId") ?? "")
   });
 
   const supabase = await createClient();
@@ -155,7 +153,7 @@ export async function saveTournamentPredictionFormAction(formData: FormData) {
 
   if (deadlineError) throw deadlineError;
   if (new Date(deadline.standings_deadline) <= new Date()) {
-    throw new Error("Champion and finalist picks are locked.");
+    throw new Error("Podium picks are locked.");
   }
 
   const { error } = await supabase.from("tournament_predictions").upsert(
@@ -163,8 +161,8 @@ export async function saveTournamentPredictionFormAction(formData: FormData) {
       league_id: data.leagueId,
       user_id: userId,
       champion_team_id: data.championTeamId,
-      finalist_a_team_id: data.finalistATeamId,
-      finalist_b_team_id: data.finalistBTeamId,
+      runner_up_team_id: data.runnerUpTeamId,
+      third_place_team_id: data.thirdPlaceTeamId,
       status: "saved"
     },
     { onConflict: "league_id,user_id" }

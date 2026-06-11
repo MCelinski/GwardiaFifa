@@ -18,6 +18,17 @@ const groupSchema = z.object({
   orderedTeamIds: z.array(z.string().uuid()).length(4)
 });
 
+const tournamentSchema = z.object({
+  leagueId: z.string().uuid(),
+  championTeamId: z.string().uuid(),
+  finalistATeamId: z.string().uuid(),
+  finalistBTeamId: z.string().uuid()
+}).refine((data) => data.finalistATeamId !== data.finalistBTeamId, {
+  message: "Finalists must be two different teams."
+}).refine((data) => data.championTeamId === data.finalistATeamId || data.championTeamId === data.finalistBTeamId, {
+  message: "Champion must be one of the finalists."
+});
+
 export async function saveMatchPredictionAction(input: z.input<typeof scoreSchema>) {
   const data = scoreSchema.parse(input);
   const supabase = await createClient();
@@ -117,4 +128,50 @@ export async function saveGroupStandingPredictionAction(input: z.input<typeof gr
   if (itemsError) throw itemsError;
   revalidatePath("/predictions/groups");
   revalidatePath("/dashboard");
+}
+
+export async function saveTournamentPredictionFormAction(formData: FormData) {
+  const data = tournamentSchema.parse({
+    leagueId: String(formData.get("leagueId") ?? ""),
+    championTeamId: String(formData.get("championTeamId") ?? ""),
+    finalistATeamId: String(formData.get("finalistATeamId") ?? ""),
+    finalistBTeamId: String(formData.get("finalistBTeamId") ?? "")
+  });
+
+  const supabase = await createClient();
+  const { data: claims } = await supabase.auth.getClaims();
+  const userId = claims?.claims.sub;
+
+  if (!userId) {
+    throw new Error("Not authenticated.");
+  }
+
+  const { data: deadline, error: deadlineError } = await supabase
+    .from("world_cup_groups")
+    .select("standings_deadline")
+    .order("standings_deadline", { ascending: true })
+    .limit(1)
+    .single();
+
+  if (deadlineError) throw deadlineError;
+  if (new Date(deadline.standings_deadline) <= new Date()) {
+    throw new Error("Champion and finalist picks are locked.");
+  }
+
+  const { error } = await supabase.from("tournament_predictions").upsert(
+    {
+      league_id: data.leagueId,
+      user_id: userId,
+      champion_team_id: data.championTeamId,
+      finalist_a_team_id: data.finalistATeamId,
+      finalist_b_team_id: data.finalistBTeamId,
+      status: "saved"
+    },
+    { onConflict: "league_id,user_id" }
+  );
+
+  if (error) throw error;
+  revalidatePath("/predictions/knockout");
+  revalidatePath("/dashboard");
+  redirect("/predictions/knockout");
 }

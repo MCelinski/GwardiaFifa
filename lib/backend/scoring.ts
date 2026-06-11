@@ -7,7 +7,7 @@ export function scoreGroupMatchPrediction(prediction: [number, number], result: 
   let points = 0;
 
   if (predA === actualA && predB === actualB) {
-    points = Math.max(points, 5);
+    return 5;
   } else if (Math.sign(predictedDiff) === Math.sign(actualDiff)) {
     points = Math.max(points, 3);
   } else if (predictedDiff === actualDiff) {
@@ -17,7 +17,7 @@ export function scoreGroupMatchPrediction(prediction: [number, number], result: 
   if (predA === actualA) points += 1;
   if (predB === actualB) points += 1;
 
-  return points;
+  return Math.min(points, 5);
 }
 
 export function scoreKnockoutPrediction(prediction: [number, number], result: [number, number], winnerCorrect: boolean) {

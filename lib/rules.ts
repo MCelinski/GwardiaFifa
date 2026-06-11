@@ -4,55 +4,56 @@ export const MATCH_LOCK_MINUTES = 10;
 
 export const rulesSummary = [
   {
-    title: "Dostęp do ligi",
+    title: "Dostep do ligi",
     items: [
       "Liga jest prywatna i wymaga konta oraz kodu zaproszenia GWARDIA-PIWO-2026.",
-      "Każdy uczestnik typuje wyłącznie ze swojego konta.",
-      "Admin może importować terminarz, synchronizować wyniki i przeliczać punkty."
+      "Kazdy uczestnik typuje wylacznie ze swojego konta.",
+      "Admin moze importowac terminarz, synchronizowac wyniki i przeliczac punkty."
     ]
   },
   {
-    title: "Deadline typów",
+    title: "Deadline typow",
     items: [
-      `Końcowe tabele grup można ustawić do ${GROUP_STANDINGS_DEADLINE_LABEL}.`,
-      `Wynik meczu można typować i edytować najpóźniej ${MATCH_LOCK_MINUTES} minut przed pierwszym gwizdkiem.`,
-      "Po zamknięciu okna typowania aplikacja i baza danych blokują zapis lub edycję typu."
+      `Koncowe tabele grup mozna ustawic do ${GROUP_STANDINGS_DEADLINE_LABEL}.`,
+      `Typ mistrza i finalistow zamyka sie razem z tabelami grup: ${GROUP_STANDINGS_DEADLINE_LABEL}.`,
+      `Wynik meczu mozna typowac i edytowac najpozniej ${MATCH_LOCK_MINUTES} minut przed pierwszym gwizdkiem.`,
+      "Po zamknieciu okna typowania aplikacja i baza danych blokuja zapis lub edycje typu."
     ]
   },
   {
-    title: "Prywatność typów",
+    title: "Prywatnosc typow",
     items: [
-      "Przed lockiem widzisz tylko własne typy.",
-      "Typy meczowe znajomych pokazują się dopiero po rozpoczęciu danego meczu.",
-      "Typy końcowych tabel grup pokazują się dopiero po deadline tabel grup."
+      "Przed lockiem widzisz tylko wlasne typy.",
+      "Typy meczowe znajomych pokazuja sie dopiero po rozpoczeciu danego meczu.",
+      "Typy koncowych tabel grup oraz mistrza/finalistow pokazuja sie dopiero po deadline tabel grup."
     ]
   },
   {
-    title: "Punktacja meczów grupowych",
+    title: "Punktacja meczow",
     items: [
-      "Dokładny wynik: 5 pkt.",
+      "Dokladny wynik: 5 pkt. To jest sztywny maks dla exact score.",
       "Poprawny rezultat: 3 pkt.",
-      "Poprawna różnica bramek: 2 pkt.",
-      "Poprawna liczba goli jednej drużyny: 1 pkt."
+      "Poprawna roznica bramek: 2 pkt.",
+      "Poprawna liczba goli jednej druzyny: 1 pkt."
     ]
   },
   {
     title: "Punktacja tabel grup",
     items: [
-      "Dokładna pozycja drużyny: 3 pkt.",
-      "Drużyna w top 2, ale na złej dokładnej pozycji: 1 pkt.",
-      "Poprawnie wskazana najlepsza drużyna z trzeciego miejsca: 1 pkt.",
-      "Idealna kolejność całej grupy: 3 pkt bonusu."
+      "Dokladna pozycja druzyny: 3 pkt.",
+      "Druzyna w top 2, ale na zlej dokladnej pozycji: 1 pkt.",
+      "Poprawnie wskazana najlepsza druzyna z trzeciego miejsca: 1 pkt.",
+      "Idealna kolejnosc calej grupy: 3 pkt bonusu."
     ]
   },
   {
     title: "Punktacja fazy pucharowej",
     items: [
-      "Dokładny wynik po 90 minutach: 5 pkt.",
-      "Poprawny zwycięzca: 3 pkt.",
-      "Poprawna różnica bramek: 2 pkt.",
+      "Dokladny wynik po 90 minutach: 5 pkt.",
+      "Poprawny zwyciezca: 3 pkt.",
+      "Poprawna roznica bramek: 2 pkt.",
       "Poprawnie wskazany mistrz: 10 pkt.",
-      "Poprawnie wskazany finalista: 6 pkt."
+      "Poprawnie wskazany finalista: 6 pkt za kazdego finaliste."
     ]
   }
 ];

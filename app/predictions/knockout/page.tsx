@@ -2,12 +2,16 @@ import { Save } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { BracketView } from "@/components/BracketView";
 import { FriendsPredictionsModal } from "@/components/FriendsPredictionsModal";
+import { TournamentPicksCard } from "@/components/TournamentPicksCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
+import { getTournamentPredictionState } from "@/lib/backend/tournament";
 import { knockoutMatches } from "@/lib/mock-data";
 
-export default function KnockoutPage() {
+export default async function KnockoutPage() {
+  const tournamentPickState = await getTournamentPredictionState();
+
   return (
     <AppShell>
       <div className="space-y-5">
@@ -27,6 +31,8 @@ export default function KnockoutPage() {
             </Button>
           </div>
         </div>
+
+        <TournamentPicksCard state={tournamentPickState} />
 
         <BracketView matches={knockoutMatches} />
 

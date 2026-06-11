@@ -9,10 +9,9 @@ import { Badge } from "@/components/ui/badge";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 
 const actions = [
-  { label: "Import teams", icon: Upload, endpoint: "/api/admin/import-mock" },
-  { label: "Import groups", icon: Upload, endpoint: "/api/admin/import-mock" },
-  { label: "Import fixtures", icon: Upload, endpoint: "/api/admin/import-mock" },
-  { label: "Sync live results", icon: RefreshCw, endpoint: "/api/admin/sync-results" },
+  { label: "Sync full World Cup schedule", icon: Upload, endpoint: "/api/admin/sync-full-schedule" },
+  { label: "Sync today's results", icon: RefreshCw, endpoint: "/api/admin/sync-results" },
+  { label: "Import mock data (dev only)", icon: Upload, endpoint: "/api/admin/import-mock" },
   { label: "Recalculate points", icon: Database, endpoint: "/api/admin/recalculate" },
   { label: "Lock/unlock prediction window", icon: LockKeyhole },
   { label: "Manage league invite code", icon: ShieldAlert }

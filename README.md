@@ -13,6 +13,7 @@ The app has a complete premium dashboard UI and a backend foundation ready for S
 - server actions for login/register/join league and saving predictions;
 - admin API routes for mock import, sync placeholder, and point recalculation;
 - real football-data.org sync endpoint wired for Vercel Cron;
+- full tournament schedule import from football-data.org for `2026-06-11` through `2026-07-19`;
 - dashboard panel with today's matches that the current user can still predict;
 - mock fallback when Supabase env vars are not configured.
 
@@ -52,6 +53,14 @@ npm run dev
 curl -X POST http://localhost:3000/api/admin/import-mock -H "Authorization: Bearer YOUR_CRON_SECRET"
 ```
 
+For production, prefer the real schedule import:
+
+```bash
+curl -X POST http://localhost:3000/api/admin/sync-full-schedule -H "Authorization: Bearer YOUR_CRON_SECRET"
+```
+
+`/api/admin/import-mock` is only for local UI/dev testing when football-data.org is unavailable.
+
 ## Security Model
 
 The database enforces lock rules with RLS:
@@ -72,3 +81,4 @@ The database enforces lock rules with RLS:
 - Replace `/api/admin/sync-results` placeholder with real football-data.org fetch once the API key and competition IDs are confirmed.
 - Vercel Cron runs `GET /api/cron/football-data` every 15 minutes, configured in `vercel.json`.
 - football-data.org sync calls `/v4/competitions/{competition}/matches?season=2026&dateFrom=today&dateTo=today`.
+- Full schedule import calls the same API for `dateFrom=2026-06-11&dateTo=2026-07-19`.

@@ -48,6 +48,9 @@ export type FootballDataSyncResult = {
   dateTo: string;
 };
 
+export const WORLD_CUP_2026_DATE_FROM = "2026-06-11";
+export const WORLD_CUP_2026_DATE_TO = "2026-07-19";
+
 const statusMap: Record<FootballDataMatch["status"], "scheduled" | "live" | "finished" | "locked"> = {
   SCHEDULED: "scheduled",
   TIMED: "scheduled",
@@ -179,6 +182,13 @@ export async function syncFootballDataMatches(options: { dateFrom?: string; date
   });
 
   return result;
+}
+
+export function syncFullWorldCupSchedule() {
+  return syncFootballDataMatches({
+    dateFrom: WORLD_CUP_2026_DATE_FROM,
+    dateTo: WORLD_CUP_2026_DATE_TO
+  });
 }
 
 function inferStage(stage: string | null | undefined, groupCode: string | null): "group" | "knockout" {

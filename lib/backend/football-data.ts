@@ -94,13 +94,31 @@ export async function syncFootballDataMatches(options: { dateFrom?: string; date
 
   const { data: leagueRow, error: leagueError } = await supabase
     .from("leagues")
+    .upsert(
+      {
+        name: league.name,
+        invite_code: league.inviteCode,
+        is_private: true
+      },
+      { onConflict: "invite_code" }
+    )
     .select("id")
-    .eq("invite_code", league.inviteCode)
-    .single();
+    .maybeSingle();
 
   if (leagueError || !leagueRow) {
-    throw new Error(leagueError?.message ?? "League not found.");
+    throw new Error(leagueError?.message ?? `League ${league.inviteCode} could not be created or loaded.`);
   }
+
+  const { error: groupsError } = await supabase.from("world_cup_groups").upsert(
+    Array.from({ length: 12 }, (_, index) => ({
+      code: String.fromCharCode("A".charCodeAt(0) + index),
+      standings_deadline: "2026-06-11T21:59:59.000Z",
+      status: "editable"
+    })),
+    { onConflict: "code" }
+  );
+
+  if (groupsError) throw groupsError;
 
   const teamRows = payload.matches.flatMap((match) => [match.homeTeam, match.awayTeam]).filter((team) => team?.name);
 

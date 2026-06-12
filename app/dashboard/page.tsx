@@ -9,17 +9,24 @@ import { StandingsProgressCard } from "@/components/StandingsProgressCard";
 import { StatCard } from "@/components/StatCard";
 import { StatusBadge } from "@/components/StatusBadge";
 import { DashboardQuote } from "@/components/DashboardQuote";
+import { HitCelebration } from "@/components/HitCelebration";
 import { TodayBettingPanel } from "@/components/TodayBettingPanel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getDashboardData } from "@/lib/backend/dashboard";
+import { getExactHits } from "@/lib/backend/predictions-view";
 import { getTodaysBettableMatches } from "@/lib/backend/fixtures";
 
 export default async function DashboardPage() {
-  const [todaysMatches, dashboard] = await Promise.all([getTodaysBettableMatches(), getDashboardData()]);
+  const [todaysMatches, dashboard, exactHits] = await Promise.all([
+    getTodaysBettableMatches(),
+    getDashboardData(),
+    getExactHits()
+  ]);
 
   return (
     <AppShell>
+      {exactHits.userId ? <HitCelebration userId={exactHits.userId} hits={exactHits.hits} /> : null}
       <div className="grid gap-5">
         <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
           <div>

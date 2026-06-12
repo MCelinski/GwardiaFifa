@@ -52,6 +52,42 @@ async function getSessionContext() {
   return { supabase, userId, leagueId: league?.id ?? null };
 }
 
+// A prediction that nailed the exact scoreline (5 pts). Used to fire the hit
+// celebration on the dashboard. Because the score was exact, the predicted
+// score equals the real result.
+export type ExactHit = {
+  fixtureId: string;
+  teamA: string;
+  teamB: string;
+  scoreA: number;
+  scoreB: number;
+};
+
+export async function getExactHits(): Promise<{ userId: string | null; hits: ExactHit[] }> {
+  const { supabase, userId } = await getSessionContext();
+  if (!userId) return { userId: null, hits: [] };
+
+  const { data } = await supabase
+    .from("match_predictions")
+    .select("fixture_id, score_a, score_b, fixtures:fixture_id(team_a:team_a_id(name), team_b:team_b_id(name))")
+    .eq("user_id", userId)
+    .eq("status", "scored")
+    .eq("points", 5);
+
+  const hits = (data ?? []).map((row) => {
+    const fixture = Array.isArray(row.fixtures) ? row.fixtures[0] : row.fixtures;
+    return {
+      fixtureId: row.fixture_id,
+      teamA: pickTeam(fixture?.team_a)?.name ?? "?",
+      teamB: pickTeam(fixture?.team_b)?.name ?? "?",
+      scoreA: row.score_a,
+      scoreB: row.score_b
+    } satisfies ExactHit;
+  });
+
+  return { userId, hits };
+}
+
 export async function getGroupStageMatches(): Promise<Match[]> {
   const { supabase, userId, leagueId } = await getSessionContext();
   if (!userId || !leagueId) return [];

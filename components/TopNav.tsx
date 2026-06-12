@@ -1,12 +1,24 @@
 "use client";
 
-import Link from "next/link";
+import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
-import { Beer, Shield } from "lucide-react";
+import { Beer, Loader2, Shield } from "lucide-react";
 import { league } from "@/lib/league";
 import { cn } from "@/lib/utils";
 import { GwardiaPiwoCrest } from "@/components/GwardiaPiwoCrest";
+import { NavProgressBar } from "@/components/NavProgressBar";
 import { Badge } from "@/components/ui/badge";
+
+// Shows a small spinner next to the label while this tab's navigation is pending.
+function NavLabel({ label }: { label: string }) {
+  const { pending } = useLinkStatus();
+  return (
+    <span className="flex items-center gap-1.5">
+      {pending ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : null}
+      {label}
+    </span>
+  );
+}
 
 const baseNavItems = [
   { href: "/dashboard", label: "Dashboard" },
@@ -45,7 +57,8 @@ export function TopNav({ isAdmin = false }: { isAdmin?: boolean }) {
                 pathname === item.href && "bg-white/10 text-foam"
               )}
             >
-              {item.label}
+              <NavProgressBar />
+              <NavLabel label={item.label} />
             </Link>
           ))}
         </nav>

@@ -25,7 +25,32 @@ export async function updateSession(request: NextRequest) {
     }
   });
 
-  await supabase.auth.getClaims();
+  const { data } = await supabase.auth.getClaims();
+  const isAuthenticated = Boolean(data?.claims?.sub);
+
+  const path = request.nextUrl.pathname;
+  // API routes authenticate themselves (Bearer token / RLS), so the session
+  // guard must not touch them — redirecting the cron or admin endpoints to the
+  // login page would break them.
+  const isApiRoute = path.startsWith("/api");
+  // The landing page ("/") hosts login + registration and is the only public page.
+  const isPublicPage = path === "/";
+
+  if (!isApiRoute) {
+    if (!isAuthenticated && !isPublicPage) {
+      const loginUrl = request.nextUrl.clone();
+      loginUrl.pathname = "/";
+      loginUrl.search = "";
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (isAuthenticated && isPublicPage) {
+      const dashboardUrl = request.nextUrl.clone();
+      dashboardUrl.pathname = "/dashboard";
+      dashboardUrl.search = "";
+      return NextResponse.redirect(dashboardUrl);
+    }
+  }
 
   return response;
 }

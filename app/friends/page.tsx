@@ -83,7 +83,7 @@ export default async function FriendsPage() {
                     <StatusBadge status={group.status} />
                   </div>
                   {["locked", "scored"].includes(group.status) ? (
-                    <div className="mt-4"><FriendsPredictionsModal locked label="Pokaż tabele" groupId={group.group} /></div>
+                    <div className="mt-4"><FriendsPredictionsModal locked label="Pokaż tabele" groupId={group.groupId} /></div>
                   ) : (
                     <div className="mt-4 flex items-center gap-2 text-sm text-muted-foreground">
                       <EyeOff className="h-4 w-4" />

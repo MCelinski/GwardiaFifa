@@ -8,6 +8,7 @@ import { MatchHistoryModal } from "@/components/MatchHistoryModal";
 import { StandingsProgressCard } from "@/components/StandingsProgressCard";
 import { StatCard } from "@/components/StatCard";
 import { StatusBadge } from "@/components/StatusBadge";
+import { DashboardQuote } from "@/components/DashboardQuote";
 import { TodayBettingPanel } from "@/components/TodayBettingPanel";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -27,6 +28,7 @@ export default async function DashboardPage() {
             <p className="mt-2 max-w-2xl text-muted-foreground">
               Typuj wyniki, ustawiaj grupy i pilnuj deadline'ow. Typy znajomych sa ukryte do locka.
             </p>
+            <DashboardQuote />
           </div>
           <LeagueCodeCard />
         </div>

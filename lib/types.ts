@@ -20,6 +20,7 @@ export type User = {
   handle: string;
   avatar: string;
   label: string;
+  roast?: string;
   isAdmin?: boolean;
   points: {
     total: number;

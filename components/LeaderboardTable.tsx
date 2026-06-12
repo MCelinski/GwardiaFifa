@@ -64,9 +64,17 @@ export function LeaderboardTable({ users }: { users: User[] }) {
                   <TD>
                     <div className="flex items-center gap-3">
                       <div className="grid h-9 w-9 place-items-center rounded-md border border-white/10 bg-white/8 text-xs font-bold">{user.avatar}</div>
-                      <div>
+                      <div className="min-w-0">
                         <p className="font-semibold">{user.name}</p>
-                        <Badge variant={index === 0 ? "gold" : index < 3 ? "green" : "muted"}>{user.label}</Badge>
+                        <Badge
+                          variant={user.roast ? "muted" : index === 0 ? "gold" : index < 3 ? "green" : "muted"}
+                          className={user.roast ? "border-amber-400/40 bg-amber-400/15 text-amber-300" : undefined}
+                        >
+                          {user.label}
+                        </Badge>
+                        {user.roast ? (
+                          <p className="mt-1 max-w-[14rem] text-[11px] italic leading-tight text-amber-300/80">„{user.roast}”</p>
+                        ) : null}
                       </div>
                     </div>
                   </TD>

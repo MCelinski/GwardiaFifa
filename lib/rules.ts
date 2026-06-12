@@ -32,6 +32,15 @@ export const rulesSummary = [
     ]
   },
   {
+    title: "Wyniki i ranking na zywo",
+    items: [
+      "Prawdziwe wyniki meczow sa pobierane automatycznie z football-data.org i synchronizowane przez caly turniej.",
+      "Po wejsciu wyniku punkty za mecze przeliczaja sie automatycznie, a ranking aktualizuje sie na zywo.",
+      "Ranking mozna filtrowac wg kategorii: ogolem, mecze grupowe, tabele grup, faza pucharowa, dzis.",
+      "Wynik meczu typuje sie liczbowo (0-99) - litery i wartosci spoza zakresu sa odrzucane."
+    ]
+  },
+  {
     title: "Punktacja meczow",
     items: [
       "Dokladny wynik: 5 pkt. To jest sztywny maks dla exact score.",
@@ -47,7 +56,9 @@ export const rulesSummary = [
       "Dokladna pozycja druzyny: 3 pkt.",
       "Druzyna w top 2, ale na zlej dokladnej pozycji: 1 pkt.",
       "Poprawnie wskazana najlepsza druzyna z trzeciego miejsca: 1 pkt.",
-      "Idealna kolejnosc calej grupy: 3 pkt bonusu."
+      "Idealna kolejnosc calej grupy: 3 pkt bonusu.",
+      "Punkty za tabele grup doliczaja sie do rankingu dopiero po rozegraniu wszystkich meczow fazy grupowej. Wczesniej w rankingu licza sie tylko mecze.",
+      "W zakladce Grupy widzisz tabele na zywo z prawdziwych wynikow oraz symulacje: ile punktow dalby Twoj typ, gdyby faza grupowa skonczyla sie teraz."
     ]
   },
   {

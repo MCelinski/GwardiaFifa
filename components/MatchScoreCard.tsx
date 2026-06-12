@@ -1,6 +1,11 @@
+"use client";
+
+import { useActionState } from "react";
 import { LockKeyhole, Pencil, Save } from "lucide-react";
-import { saveMatchPredictionInlineFormAction } from "@/app/actions/predictions";
+import { saveMatchPredictionState, type MatchSaveState } from "@/app/actions/predictions";
 import { Flag } from "@/components/Flag";
+
+const INITIAL_SAVE_STATE: MatchSaveState = { status: "idle" };
 import { StatusBadge } from "@/components/StatusBadge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -36,10 +41,12 @@ export function MatchScoreCard({
   prediction,
   result
 }: MatchScoreCardProps) {
+  const [state, formAction, isPending] = useActionState(saveMatchPredictionState, INITIAL_SAVE_STATE);
+
   return (
     <Card>
       <CardContent className="p-4">
-        <form action={saveMatchPredictionInlineFormAction}>
+        <form action={formAction}>
           <input type="hidden" name="fixtureId" value={fixtureId} />
 
           <div className="flex flex-wrap items-center justify-between gap-3">
@@ -96,7 +103,7 @@ export function MatchScoreCard({
                 />
               </div>
             </div>
-            <Button size="sm" variant={locked ? "secondary" : "default"} disabled={locked}>
+            <Button size="sm" variant={locked ? "secondary" : "default"} disabled={locked || isPending}>
               {locked ? (
                 <LockKeyhole className="h-4 w-4" />
               ) : prediction ? (
@@ -104,9 +111,15 @@ export function MatchScoreCard({
               ) : (
                 <Save className="h-4 w-4" />
               )}
-              {locked ? "Zamknięte" : prediction ? "Edytuj typ" : "Zapisz typ"}
+              {locked ? "Zamknięte" : isPending ? "Zapisywanie..." : prediction ? "Edytuj typ" : "Zapisz typ"}
             </Button>
           </div>
+
+          {state.status !== "idle" ? (
+            <p className={`mt-3 text-center text-xs ${state.status === "error" ? "text-red-300" : "text-emerald-300"}`}>
+              {state.message}
+            </p>
+          ) : null}
         </form>
       </CardContent>
     </Card>

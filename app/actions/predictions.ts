@@ -76,24 +76,30 @@ export async function saveMatchPredictionAction(input: z.input<typeof scoreSchem
   revalidatePath("/dashboard");
 }
 
-export async function saveMatchPredictionFormAction(formData: FormData) {
-  await saveMatchPredictionAction({
-    fixtureId: String(formData.get("fixtureId") ?? ""),
-    scoreA: String(formData.get("scoreA") ?? ""),
-    scoreB: String(formData.get("scoreB") ?? "")
-  });
+export type MatchSaveState = { status: "idle" | "success" | "error"; message?: string };
 
-  redirect("/dashboard");
+// Turns a stale-tab save into a friendly inline message instead of an unhandled
+// throw. The deadline is still enforced server-side (saveMatchPredictionAction +
+// RLS use the server clock), so this only changes how a rejected save is shown:
+// the user sees "deadline minął, odśwież" rather than a Next error screen.
+function toFriendlyMatchError(error: unknown): string {
+  const raw = error instanceof Error ? error.message : "";
+  if (/locked/i.test(raw)) return "Typ zamknięty — minął deadline. Odśwież stronę.";
+  if (/not authenticated/i.test(raw)) return "Sesja wygasła — zaloguj się ponownie.";
+  return "Nie udało się zapisać typu. Możliwe, że minął deadline — odśwież stronę.";
 }
 
-// Same as the form action above but stays on the current page (revalidates in
-// saveMatchPredictionAction instead of redirecting to the dashboard).
-export async function saveMatchPredictionInlineFormAction(formData: FormData) {
-  await saveMatchPredictionAction({
-    fixtureId: String(formData.get("fixtureId") ?? ""),
-    scoreA: String(formData.get("scoreA") ?? ""),
-    scoreB: String(formData.get("scoreB") ?? "")
-  });
+export async function saveMatchPredictionState(_prev: MatchSaveState, formData: FormData): Promise<MatchSaveState> {
+  try {
+    await saveMatchPredictionAction({
+      fixtureId: String(formData.get("fixtureId") ?? ""),
+      scoreA: String(formData.get("scoreA") ?? ""),
+      scoreB: String(formData.get("scoreB") ?? "")
+    });
+    return { status: "success", message: "Zapisano typ." };
+  } catch (error) {
+    return { status: "error", message: toFriendlyMatchError(error) };
+  }
 }
 
 export async function saveGroupStandingPredictionAction(input: z.input<typeof groupSchema>) {

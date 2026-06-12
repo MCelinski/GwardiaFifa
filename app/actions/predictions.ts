@@ -4,12 +4,12 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
-import { MATCH_LOCK_MINUTES } from "@/lib/rules";
+import { MATCH_LOCK_MINUTES, MAX_MATCH_GOALS } from "@/lib/rules";
 
 const scoreSchema = z.object({
   fixtureId: z.string().uuid(),
-  scoreA: z.coerce.number().int().min(0).max(99),
-  scoreB: z.coerce.number().int().min(0).max(99),
+  scoreA: z.coerce.number().int().min(0).max(MAX_MATCH_GOALS),
+  scoreB: z.coerce.number().int().min(0).max(MAX_MATCH_GOALS),
   winnerTeamId: z.string().uuid().optional().nullable()
 });
 

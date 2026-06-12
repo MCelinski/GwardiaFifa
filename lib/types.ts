@@ -54,6 +54,35 @@ export type GroupStandingPrediction = {
   teams: Team[];
 };
 
+// One row of a live, Flashscore-style group table computed from real results.
+export type GroupTableRow = {
+  teamId: string;
+  name: string;
+  flag: string;
+  position: number;
+  played: number;
+  won: number;
+  drawn: number;
+  lost: number;
+  goalsFor: number;
+  goalsAgainst: number;
+  goalDifference: number;
+  points: number;
+  isBestThird: boolean;
+};
+
+export type GroupTable = {
+  group: string;
+  groupId: string;
+  status: PredictionStatus;
+  deadline: string;
+  standings: GroupTableRow[];
+  // The player's predicted order (team ids, position 1..4), or null if not set.
+  prediction: { teamId: string; name: string; flag: string }[] | null;
+  // Points this prediction would earn if the group stage ended right now.
+  simulatedPoints: number | null;
+};
+
 export type KnockoutMatch = {
   id: string;
   round: string;

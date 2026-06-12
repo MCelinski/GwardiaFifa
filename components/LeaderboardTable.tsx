@@ -1,34 +1,63 @@
 "use client";
 
-import { Fragment, useState } from "react";
+import { Fragment, useMemo, useState } from "react";
 import { ChevronDown, ChevronRight, Trophy } from "lucide-react";
 import type { User } from "@/lib/types";
 import { Badge } from "@/components/ui/badge";
 import { Table, TBody, TD, TH, THead, TR } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+type MetricKey = "total" | "groupMatches" | "groupStandings" | "knockout" | "last";
+
+const filters: { key: MetricKey; label: string }[] = [
+  { key: "total", label: "ogółem" },
+  { key: "groupMatches", label: "mecze grupowe" },
+  { key: "groupStandings", label: "tabele grup" },
+  { key: "knockout", label: "faza pucharowa" },
+  { key: "last", label: "dziś" }
+];
 
 export function LeaderboardTable({ users }: { users: User[] }) {
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [activeFilter, setActiveFilter] = useState<MetricKey>("total");
+
+  const sortedUsers = useMemo(
+    () =>
+      [...users].sort(
+        (a, b) => b.points[activeFilter] - a.points[activeFilter] || b.points.total - a.points.total
+      ),
+    [users, activeFilter]
+  );
 
   return (
-    <div className="overflow-hidden rounded-lg border border-white/10">
+    <div className="space-y-4">
+      <div className="flex flex-wrap gap-2">
+        {filters.map((filter) => (
+          <button key={filter.key} type="button" onClick={() => setActiveFilter(filter.key)}>
+            <Badge variant={filter.key === activeFilter ? "gold" : "muted"}>{filter.label}</Badge>
+          </button>
+        ))}
+      </div>
+
+      <div className="overflow-hidden rounded-lg border border-white/10">
       <div className="overflow-x-auto">
         <Table>
           <THead>
             <TR>
               <TH>Poz.</TH>
               <TH>Gracz</TH>
-              <TH>Razem</TH>
-              <TH className="hidden md:table-cell">Mecze</TH>
-              <TH className="hidden md:table-cell">Tabele</TH>
-              <TH className="hidden md:table-cell">Puchar</TH>
+              <TH className={cn(activeFilter === "total" && "text-foam")}>Razem</TH>
+              <TH className={cn("hidden md:table-cell", activeFilter === "groupMatches" && "text-foam")}>Mecze</TH>
+              <TH className={cn("hidden md:table-cell", activeFilter === "groupStandings" && "text-foam")}>Tabele</TH>
+              <TH className={cn("hidden md:table-cell", activeFilter === "knockout" && "text-foam")}>Puchar</TH>
               <TH className="hidden md:table-cell">Bonus</TH>
-              <TH className="hidden md:table-cell">Ostatnio</TH>
+              <TH className={cn("hidden md:table-cell", activeFilter === "last" && "text-foam")}>Ostatnio</TH>
               <TH />
             </TR>
           </THead>
           <TBody>
-            {users.map((user, index) => (
+            {sortedUsers.map((user, index) => (
               <Fragment key={user.id}>
                 <TR key={user.id}>
                   <TD className="font-bold text-gold">#{index + 1}</TD>
@@ -41,12 +70,12 @@ export function LeaderboardTable({ users }: { users: User[] }) {
                       </div>
                     </div>
                   </TD>
-                  <TD className="font-bold">{user.points.total}</TD>
-                  <TD className="hidden md:table-cell">{user.points.groupMatches}</TD>
-                  <TD className="hidden md:table-cell">{user.points.groupStandings}</TD>
-                  <TD className="hidden md:table-cell">{user.points.knockout}</TD>
+                  <TD className={cn("font-bold", activeFilter === "total" && "text-foam")}>{user.points.total}</TD>
+                  <TD className={cn("hidden md:table-cell", activeFilter === "groupMatches" && "font-bold text-foam")}>{user.points.groupMatches}</TD>
+                  <TD className={cn("hidden md:table-cell", activeFilter === "groupStandings" && "font-bold text-foam")}>{user.points.groupStandings}</TD>
+                  <TD className={cn("hidden md:table-cell", activeFilter === "knockout" && "font-bold text-foam")}>{user.points.knockout}</TD>
                   <TD className="hidden md:table-cell">{user.points.bonus}</TD>
-                  <TD className={`hidden md:table-cell ${user.points.last ? "text-emerald-300" : "text-muted-foreground"}`}>+{user.points.last}</TD>
+                  <TD className={cn("hidden md:table-cell", activeFilter === "last" && "font-bold", user.points.last ? "text-emerald-300" : "text-muted-foreground")}>+{user.points.last}</TD>
                   <TD>
                     <Button
                       aria-label="Expand user history"
@@ -73,6 +102,7 @@ export function LeaderboardTable({ users }: { users: User[] }) {
             ))}
           </TBody>
         </Table>
+      </div>
       </div>
     </div>
   );

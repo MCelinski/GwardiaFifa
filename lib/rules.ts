@@ -1,6 +1,9 @@
 export const GROUP_STANDINGS_DEADLINE_LABEL = "11 czerwca 2026, 23:59 Europe/Warsaw";
 export const GROUP_STANDINGS_DEADLINE_ISO = "2026-06-11T21:59:59.000Z";
 export const MATCH_LOCK_MINUTES = 10;
+// Highest number of goals a single team can be typed for. Two-digit cap keeps
+// inputs sane (100+ is nonsense) and matches the server-side Zod validation.
+export const MAX_MATCH_GOALS = 99;
 
 export const rulesSummary = [
   {

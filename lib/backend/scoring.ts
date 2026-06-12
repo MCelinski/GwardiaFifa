@@ -40,16 +40,31 @@ export function scoreKnockoutPrediction(prediction: [number, number], result: [n
   return Math.max(base, winnerCorrect ? 3 : 0);
 }
 
+// Mirrors the Postgres function public.score_group_prediction_items
+// (see supabase/migrations/0003_production_scoring_and_tournament_picks.sql).
+// `actual` is the real final order of team ids (index 0 = position 1). Each
+// predicted slot scores on a mutually-exclusive ladder, plus a perfect-order
+// bonus — kept identical to the DB so the live simulation matches the official
+// points awarded after the group stage.
+//
+//   exact position ............................ 3
+//   else predicted top-2 and actually top-2 ... 1
+//   else predicted 3rd and is a best third .... 1
+//   all four positions exact .................. +3 bonus
 export function scoreGroupOrder(predicted: string[], actual: string[], bestThirdIds: string[] = []) {
   let points = 0;
 
   predicted.forEach((teamId, index) => {
-    if (actual[index] === teamId) points += 3;
-    else if (index < 2 && actual.slice(0, 2).includes(teamId)) points += 1;
-    if (index === 2 && bestThirdIds.includes(teamId)) points += 1;
+    if (actual[index] === teamId) {
+      points += 3;
+    } else if (index < 2 && actual.slice(0, 2).includes(teamId)) {
+      points += 1;
+    } else if (index === 2 && bestThirdIds.includes(teamId)) {
+      points += 1;
+    }
   });
 
-  if (predicted.every((teamId, index) => actual[index] === teamId)) {
+  if (predicted.length === actual.length && predicted.every((teamId, index) => actual[index] === teamId)) {
     points += 3;
   }
 

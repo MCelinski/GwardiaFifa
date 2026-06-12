@@ -5,7 +5,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+import { ScoreInput } from "@/components/ScoreInput";
 
 export type MatchScoreCardProps = {
   fixtureId: string;
@@ -81,24 +81,18 @@ export function MatchScoreCard({
             <div className="flex items-center gap-2">
               <span className="text-sm font-medium text-muted-foreground">Twój typ:</span>
               <div className="flex items-center gap-1.5">
-                <Input
-                  aria-label={`Twój typ – ${teamA}`}
-                  className="h-10 w-11 px-0 text-center text-base font-bold"
-                  defaultValue={prediction?.[0] ?? ""}
+                <ScoreInput
+                  ariaLabel={`Twój typ – ${teamA}`}
+                  defaultValue={prediction?.[0]}
                   disabled={locked}
-                  inputMode="numeric"
                   name="scoreA"
-                  required
                 />
                 <span className="text-muted-foreground">:</span>
-                <Input
-                  aria-label={`Twój typ – ${teamB}`}
-                  className="h-10 w-11 px-0 text-center text-base font-bold"
-                  defaultValue={prediction?.[1] ?? ""}
+                <ScoreInput
+                  ariaLabel={`Twój typ – ${teamB}`}
+                  defaultValue={prediction?.[1]}
                   disabled={locked}
-                  inputMode="numeric"
                   name="scoreB"
-                  required
                 />
               </div>
             </div>

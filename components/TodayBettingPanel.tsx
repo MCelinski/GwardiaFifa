@@ -8,7 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/EmptyState";
 import { Flag } from "@/components/Flag";
 import { StatusBadge } from "@/components/StatusBadge";
-import { Input } from "@/components/ui/input";
+import { ScoreInput } from "@/components/ScoreInput";
 
 export function TodayBettingPanel({ matches }: { matches: TodayBettableMatch[] }) {
   return (
@@ -75,24 +75,18 @@ export function TodayBettingPanel({ matches }: { matches: TodayBettableMatch[] }
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-muted-foreground">Twój typ:</span>
                     <div className="flex items-center gap-1.5">
-                      <Input
-                        aria-label={`Twój typ – ${match.teamA}`}
-                        className="h-10 w-11 px-0 text-center text-base font-bold"
-                        defaultValue={match.prediction?.scoreA ?? ""}
+                      <ScoreInput
+                        ariaLabel={`Twój typ – ${match.teamA}`}
+                        defaultValue={match.prediction?.scoreA}
                         disabled={!match.canPredict}
-                        inputMode="numeric"
                         name="scoreA"
-                        required
                       />
                       <span className="text-muted-foreground">:</span>
-                      <Input
-                        aria-label={`Twój typ – ${match.teamB}`}
-                        className="h-10 w-11 px-0 text-center text-base font-bold"
-                        defaultValue={match.prediction?.scoreB ?? ""}
+                      <ScoreInput
+                        ariaLabel={`Twój typ – ${match.teamB}`}
+                        defaultValue={match.prediction?.scoreB}
                         disabled={!match.canPredict}
-                        inputMode="numeric"
                         name="scoreB"
-                        required
                       />
                     </div>
                   </div>

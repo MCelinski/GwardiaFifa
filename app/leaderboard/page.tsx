@@ -6,8 +6,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { getLeaderboard } from "@/lib/backend/leaderboard";
 import { getPrimaryLeague } from "@/lib/backend/league";
 
-const filters = ["ogółem", "mecze grupowe", "tabele grup", "faza pucharowa", "dziś"];
-
 export default async function LeaderboardPage() {
   const league = await getPrimaryLeague();
   const users = await getLeaderboard(league?.id);
@@ -34,12 +32,6 @@ export default async function LeaderboardPage() {
                 <p className="mt-4 text-3xl font-black text-foam">{user.points.total}</p>
               </CardContent>
             </Card>
-          ))}
-        </div>
-
-        <div className="flex flex-wrap gap-2">
-          {filters.map((filter) => (
-            <Badge key={filter} variant={filter === "ogółem" ? "gold" : "muted"}>{filter}</Badge>
           ))}
         </div>
 

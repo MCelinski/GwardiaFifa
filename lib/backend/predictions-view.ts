@@ -2,7 +2,7 @@ import { getPrimaryLeague } from "@/lib/backend/league";
 import { scoreGroupOrder } from "@/lib/backend/scoring";
 import { GROUP_STANDINGS_DEADLINE_LABEL, MATCH_LOCK_MINUTES } from "@/lib/rules";
 import { createClient } from "@/lib/supabase/server";
-import { formatWarsawDateTime } from "@/lib/time";
+import { formatWarsawDateTime, getWarsawDateKey } from "@/lib/time";
 import type { GroupStandingPrediction, GroupTable, GroupTableRow, KnockoutMatch, Match, PredictionStatus, Team } from "@/lib/types";
 
 // Number of best third-placed teams that advance from the group stage.
@@ -88,7 +88,7 @@ export async function getExactHits(): Promise<{ userId: string | null; hits: Exa
   return { userId, hits };
 }
 
-export async function getGroupStageMatches(): Promise<Match[]> {
+export async function getGroupStageMatches(opts?: { upcomingOnly?: boolean }): Promise<Match[]> {
   const { supabase, userId, leagueId } = await getSessionContext();
   if (!userId || !leagueId) return [];
 
@@ -108,7 +108,15 @@ export async function getGroupStageMatches(): Promise<Match[]> {
 
   const now = new Date();
 
-  return (fixtures ?? []).map((fixture) => {
+  // When upcomingOnly, hide matches whose calendar day (Warsaw) is before today —
+  // today's matches stay even after kickoff, so the betting list isn't cluttered
+  // with already-played days. Past matches remain reachable via the history modal.
+  const todayKey = getWarsawDateKey(now);
+  const visibleFixtures = opts?.upcomingOnly
+    ? (fixtures ?? []).filter((fixture) => getWarsawDateKey(new Date(fixture.starts_at)) >= todayKey)
+    : fixtures ?? [];
+
+  return visibleFixtures.map((fixture) => {
     const startsAt = new Date(fixture.starts_at);
     const lockAt = new Date(startsAt.getTime() - MATCH_LOCK_MINUTES * 60 * 1000);
     const teamA = pickTeam(fixture.team_a);
@@ -361,7 +369,7 @@ export async function getGroupTables(): Promise<GroupTable[]> {
   });
 }
 
-export async function getKnockoutMatches(): Promise<KnockoutMatch[]> {
+export async function getKnockoutMatches(opts?: { upcomingOnly?: boolean }): Promise<KnockoutMatch[]> {
   const { supabase, userId, leagueId } = await getSessionContext();
   if (!userId || !leagueId) return [];
 
@@ -380,7 +388,14 @@ export async function getKnockoutMatches(): Promise<KnockoutMatch[]> {
   const predictionByFixture = new Map((predictions ?? []).map((row) => [row.fixture_id, row]));
   const now = new Date();
 
-  return (fixtures ?? [])
+  // Same day-based filter as the group stage: hide knockout days before today,
+  // keep today and future. Played matches live in the history modal.
+  const todayKey = getWarsawDateKey(now);
+  const visibleFixtures = opts?.upcomingOnly
+    ? (fixtures ?? []).filter((fixture) => getWarsawDateKey(new Date(fixture.starts_at)) >= todayKey)
+    : fixtures ?? [];
+
+  return visibleFixtures
     .map((fixture) => {
       const startsAt = new Date(fixture.starts_at);
       const lockAt = new Date(startsAt.getTime() - MATCH_LOCK_MINUTES * 60 * 1000);

@@ -2,6 +2,7 @@ import { Info } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { EmptyState } from "@/components/EmptyState";
 import { FriendsPredictionsModal } from "@/components/FriendsPredictionsModal";
+import { MatchHistoryModal } from "@/components/MatchHistoryModal";
 import { MatchScoreCard } from "@/components/MatchScoreCard";
 import { TournamentPicksCard } from "@/components/TournamentPicksCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -11,7 +12,7 @@ import { getKnockoutMatches } from "@/lib/backend/predictions-view";
 export default async function KnockoutPage() {
   const [tournamentPickState, knockoutMatches] = await Promise.all([
     getTournamentPredictionState(),
-    getKnockoutMatches()
+    getKnockoutMatches({ upcomingOnly: true })
   ]);
 
   const lockedStatuses = ["locked", "live", "scored"];
@@ -32,9 +33,12 @@ export default async function KnockoutPage() {
 
         <Card>
           <CardHeader>
-            <CardTitle>Mecze pucharowe do obstawienia</CardTitle>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <CardTitle>Mecze pucharowe do obstawienia</CardTitle>
+              <MatchHistoryModal />
+            </div>
             <p className="text-sm text-muted-foreground">
-              Tylko mecze ze znanymi drużynami. Każdy typ zamyka się 10 minut przed pierwszym gwizdkiem.
+              Dzisiejsze i nadchodzące mecze ze znanymi drużynami. Każdy typ zamyka się 10 minut przed pierwszym gwizdkiem.
             </p>
           </CardHeader>
           <CardContent>
@@ -60,7 +64,7 @@ export default async function KnockoutPage() {
             ) : (
               <EmptyState
                 title="Brak meczów pucharowych do obstawienia."
-                detail="Drużyny w fazie pucharowej są znane dopiero po rozstrzygnięciu grup. Mecze pojawią się tutaj automatycznie."
+                detail="Drużyny w fazie pucharowej są znane dopiero po rozstrzygnięciu grup. Nadchodzące mecze pojawią się tutaj automatycznie, a rozegrane znajdziesz w „Historii meczów” u góry."
               />
             )}
           </CardContent>

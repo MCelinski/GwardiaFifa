@@ -2,12 +2,13 @@ import { AppShell } from "@/components/AppShell";
 import { EmptyState } from "@/components/EmptyState";
 import { FriendsPredictionsModal } from "@/components/FriendsPredictionsModal";
 import { GroupMatchPredictionCard } from "@/components/GroupMatchPredictionCard";
+import { MatchHistoryModal } from "@/components/MatchHistoryModal";
 import { Card, CardContent } from "@/components/ui/card";
 import { getGroupStageMatches } from "@/lib/backend/predictions-view";
 import type { Match } from "@/lib/types";
 
 export default async function GroupMatchesPage() {
-  const matches = await getGroupStageMatches();
+  const matches = await getGroupStageMatches({ upcomingOnly: true });
 
   const grouped = matches.reduce<Record<string, Match[]>>((acc, match) => {
     const date = match.date.split(", ")[0];
@@ -19,7 +20,10 @@ export default async function GroupMatchesPage() {
   return (
     <AppShell>
       <div className="space-y-5">
-        <Header title="Typy meczów fazy grupowej" detail="Wszystkie mecze fazy grupowej pogrupowane datami. Każdy typ zamyka się 10 minut przed pierwszym gwizdkiem." />
+        <div className="flex flex-wrap items-start justify-between gap-3">
+          <Header title="Typy meczów fazy grupowej" detail="Dzisiejsze i nadchodzące mecze fazy grupowej pogrupowane datami. Każdy typ zamyka się 10 minut przed pierwszym gwizdkiem." />
+          <MatchHistoryModal />
+        </div>
 
         {matches.length ? (
           Object.entries(grouped).map(([date, dayMatches]) => (
@@ -36,7 +40,7 @@ export default async function GroupMatchesPage() {
             </section>
           ))
         ) : (
-          <EmptyState title="Brak meczow w terminarzu." detail="Admin musi zaimportowac oficjalny terminarz World Cup 2026." />
+          <EmptyState title="Brak nadchodzących meczów." detail="Rozegrane mecze znajdziesz w „Historii meczów” u góry. Nowe mecze pojawią się tutaj automatycznie." />
         )}
 
         <Card>

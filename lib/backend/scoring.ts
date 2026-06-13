@@ -1,13 +1,12 @@
 // Scoring mirrors the Postgres function public.score_match_prediction
-// (see supabase/migrations/0005_match_scoring_margin_bonus.sql). The database
-// is the source of truth for the leaderboard; this TS version exists for any
-// client-side preview and must stay in sync.
+// (see supabase/migrations/0008_match_scoring_drop_one_team_bonus.sql). The
+// database is the source of truth for the leaderboard; this TS version exists
+// for any client-side preview and must stay in sync.
 //
 //   exact score ........................ 5 (hard max)
 //   correct outcome (winner/draw) ...... +3
 //   correct exact goal difference ...... +1
-//   correct goals of one team .......... +1
-//   (additive, capped at 5)
+//   (additive, capped at 5 -> non-exact tops out at 4)
 export function scoreGroupMatchPrediction(prediction: [number, number], result: [number, number]) {
   const [predA, predB] = prediction;
   const [actualA, actualB] = result;
@@ -25,10 +24,6 @@ export function scoreGroupMatchPrediction(prediction: [number, number], result: 
   }
 
   if (predictedDiff === actualDiff) {
-    points += 1;
-  }
-
-  if (predA === actualA || predB === actualB) {
     points += 1;
   }
 

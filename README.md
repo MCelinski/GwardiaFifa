@@ -12,7 +12,7 @@ The app is **live and in production** for the World Cup 2026 group stage. Full p
 - server actions for login/register/join league and saving predictions;
 - admin API routes for official schedule import, results sync, and point recalculation;
 - **football-data.org sync over the whole tournament window** on every cron run, so results are ingested reliably regardless of timezone/finalization timing;
-- match scoring uses the **margin-bonus** model (exact 5; correct outcome +3; exact goal difference +1; one team's goals +1; capped at 5) — migration `0005`;
+- match scoring uses the **result + handicap** model (exact 5; correct outcome +3; exact goal difference +1; capped at 5, so non-exact tops out at 4) — migration `0008`;
 - **group-standings points are added to the leaderboard only after the entire group stage finishes** (migration `0007`); until then the leaderboard reflects matches only;
 - the Grupy tab shows **real live tables computed from results** plus a per-group "Twój typ" panel that **simulates** how many points your prediction would earn if the stage ended now;
 - **interactive leaderboard filters** (overall / group matches / group tables / knockout / today) that re-sort the table;

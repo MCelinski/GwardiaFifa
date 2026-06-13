@@ -45,9 +45,8 @@ export const rulesSummary = [
     items: [
       "Dokladny wynik: 5 pkt. To jest sztywny maks dla exact score.",
       "Poprawny rezultat (zwyciezca lub remis): 3 pkt.",
-      "Bonus za dokladna roznice bramek: +1 pkt.",
-      "Bonus za dokladna liczbe goli jednej druzyny: +1 pkt.",
-      "Bonusy sumuja sie z rezultatem, ale laczny wynik meczu nie przekroczy 5 pkt."
+      "Bonus za dokladna roznice bramek (handicap): +1 pkt.",
+      "Bonus sumuje sie z rezultatem, wiec bez dokladnego wyniku maksymalnie 4 pkt."
     ]
   },
   {

@@ -22,14 +22,13 @@ async function q(path) {
   return res.json();
 }
 
-// Margin-bonus model (mirror of migration 0005)
+// Result + handicap model (mirror of migration 0008)
 function score(pa, pb, aa, ab) {
   if (pa === aa && pb === ab) return 5;
   let pts = 0;
   const pd = pa - pb, ad = aa - ab;
   if (Math.sign(pd) === Math.sign(ad)) pts += 3;
   if (pd === ad) pts += 1;
-  if (pa === aa || pb === ab) pts += 1;
   return Math.min(pts, 5);
 }
 

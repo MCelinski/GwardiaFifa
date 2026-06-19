@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, BellOff, BellRing } from "lucide-react";
+import { Bell, BellOff, BellRing, Send } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 
@@ -10,7 +10,7 @@ import { Card, CardContent } from "@/components/ui/card";
 // only manages the browser push subscription and POSTs it to /api/notifications/subscribe.
 //
 // iOS note: web push only works once the PWA is added to the home screen (16.4+), so on
-// iOS Safari the browser reports no PushManager and we show the email-fallback hint.
+// iOS Safari the browser reports no PushManager and we show a hint to install first.
 
 type State = "loading" | "unsupported" | "blocked" | "enabled" | "disabled";
 
@@ -20,6 +20,7 @@ export function NotificationOptIn() {
   const [state, setState] = useState<State>("loading");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [info, setInfo] = useState<string | null>(null);
 
   useEffect(() => {
     if (!isPushSupported()) {
@@ -92,6 +93,22 @@ export function NotificationOptIn() {
     }
   }
 
+  async function sendTest() {
+    setBusy(true);
+    setError(null);
+    setInfo(null);
+    try {
+      const response = await fetch("/api/notifications/test", { method: "POST" });
+      const data = (await response.json().catch(() => ({}))) as { sent?: number; error?: string };
+      if (!response.ok) throw new Error(data.error ?? "Nie udało się wysłać testu.");
+      setInfo(data.sent ? "Wysłano! Sprawdź powiadomienia na telefonie." : "Nie znaleziono aktywnej subskrypcji.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Coś poszło nie tak.");
+    } finally {
+      setBusy(false);
+    }
+  }
+
   if (state === "loading") return null;
 
   return (
@@ -105,14 +122,21 @@ export function NotificationOptIn() {
             <p className="font-semibold">Przypomnienia o typach</p>
             <p className="text-sm text-muted-foreground">{describe(state)}</p>
             {error ? <p className="mt-1 text-sm text-destructive">{error}</p> : null}
+            {info ? <p className="mt-1 text-sm text-emerald-400">{info}</p> : null}
           </div>
         </div>
 
         {state === "enabled" ? (
-          <Button variant="secondary" size="sm" onClick={disable} disabled={busy} className="shrink-0">
-            <BellOff className="h-4 w-4" />
-            Wyłącz
-          </Button>
+          <div className="flex shrink-0 gap-2">
+            <Button size="sm" onClick={sendTest} disabled={busy}>
+              <Send className="h-4 w-4" />
+              Wyślij testowe
+            </Button>
+            <Button variant="secondary" size="sm" onClick={disable} disabled={busy}>
+              <BellOff className="h-4 w-4" />
+              Wyłącz
+            </Button>
+          </div>
         ) : state === "disabled" ? (
           <Button size="sm" onClick={enable} disabled={busy} className="shrink-0">
             <Bell className="h-4 w-4" />

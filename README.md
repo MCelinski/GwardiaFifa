@@ -52,7 +52,17 @@ CRON_SECRET=
 FOOTBALL_DATA_API_KEY=
 FOOTBALL_DATA_COMPETITION=WC
 FOOTBALL_DATA_SEASON=2026
+
+# Daily betting reminders (Web Push)
+NEXT_PUBLIC_VAPID_PUBLIC_KEY=   # public VAPID key (also used by the browser to subscribe)
+VAPID_PUBLIC_KEY=               # same value as NEXT_PUBLIC_VAPID_PUBLIC_KEY
+VAPID_PRIVATE_KEY=              # secret VAPID key — keep server-side only
+VAPID_SUBJECT=mailto:michc2000@gmail.com
 ```
+
+> Generate the VAPID keypair once with `npx web-push generate-vapid-keys` and paste the
+> public key into both `NEXT_PUBLIC_VAPID_PUBLIC_KEY` and `VAPID_PUBLIC_KEY`, the private
+> key into `VAPID_PRIVATE_KEY`. Without these, push is skipped (the app still runs).
 
 4. Start the app:
 
@@ -88,6 +98,8 @@ The database enforces lock rules with RLS:
 - Create the first admin user and set their `profiles.is_admin = true` plus `league_members.role = 'admin'`.
 - Enable email/password auth in Supabase.
 - Set Vercel environment variable `CRON_SECRET`.
-- Vercel Cron runs `GET /api/cron/football-data` once per day on Hobby, configured in `vercel.json`. An external scheduler (e.g. cron-job.org every 5 min) can hit the same endpoint for near-real-time results.
+- Vercel Cron runs `GET /api/cron/football-data` once per day on Hobby, configured in `vercel.json` (Hobby allows only **one** cron job). An external scheduler (e.g. cron-job.org every 5 min) can hit the same endpoint for near-real-time results.
+- The daily betting reminder `GET /api/cron/reminders` is triggered by an **external scheduler (cron-job.org)**, since the single Vercel cron slot is taken by `football-data`. It sends one Web Push to players who still have un-bet matches whose deadline falls in the next 24h — so overnight kickoffs are nudged the evening before and nobody is woken at night. Set `VAPID_*` in Vercel for this to send.
+  - In cron-job.org: schedule it for **20:00 in the Europe/Warsaw timezone** (the dashboard lets you pick the timezone, so you don't have to hand-convert to UTC), method **GET**, URL `https://<your-app>/api/cron/reminders`, and add a request header `Authorization: Bearer <CRON_SECRET>`.
 - The cron syncs the **whole tournament window** (`WORLD_CUP_2026_DATE_FROM`…`DATE_TO`) on every run, not just "today", so a result that finalizes after the day's cron slot is still back-filled. The manual `/api/admin/sync-results` accepts an explicit `dateFrom`/`dateTo`.
 - Full schedule import uses the committed static snapshot in `lib/official-schedule.ts`.

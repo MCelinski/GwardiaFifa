@@ -11,6 +11,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { DashboardQuote } from "@/components/DashboardQuote";
 import { HitCelebration } from "@/components/HitCelebration";
 import { TodayBettingPanel } from "@/components/TodayBettingPanel";
+import { NotificationOptIn } from "@/components/NotificationOptIn";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getDashboardData } from "@/lib/backend/dashboard";
@@ -45,6 +46,8 @@ export default async function DashboardPage() {
             <StatCard key={stat.label} {...stat} />
           ))}
         </div>
+
+        <NotificationOptIn />
 
         <TodayBettingPanel matches={todaysMatches} />
 

@@ -1,12 +1,12 @@
 // Scoring mirrors the Postgres function public.score_match_prediction
-// (see supabase/migrations/0008_match_scoring_drop_one_team_bonus.sql). The
+// (see supabase/migrations/0009_match_scoring_draw_no_handicap.sql). The
 // database is the source of truth for the leaderboard; this TS version exists
 // for any client-side preview and must stay in sync.
 //
-//   exact score ........................ 5 (hard max)
-//   correct outcome (winner/draw) ...... +3
-//   correct exact goal difference ...... +1
-//   (additive, capped at 5 -> non-exact tops out at 4)
+//   exact score ............................. 5 (hard max)
+//   correct outcome (winner/draw) ........... +3
+//   correct exact goal difference, non-draw . +1
+//   (additive, capped at 5 -> a correct draw = 3, an exact draw = 5)
 export function scoreGroupMatchPrediction(prediction: [number, number], result: [number, number]) {
   const [predA, predB] = prediction;
   const [actualA, actualB] = result;
@@ -23,7 +23,9 @@ export function scoreGroupMatchPrediction(prediction: [number, number], result: 
     points += 3;
   }
 
-  if (predictedDiff === actualDiff) {
+  // Handicap bonus only for non-draws, so a predicted draw never earns +1 just
+  // by having difference 0.
+  if (predictedDiff === actualDiff && actualDiff !== 0) {
     points += 1;
   }
 

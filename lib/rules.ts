@@ -45,8 +45,9 @@ export const rulesSummary = [
     items: [
       "Dokladny wynik: 5 pkt. To jest sztywny maks dla exact score.",
       "Poprawny rezultat (zwyciezca lub remis): 3 pkt.",
-      "Bonus za dokladna roznice bramek (handicap): +1 pkt.",
-      "Bonus sumuje sie z rezultatem, wiec bez dokladnego wyniku maksymalnie 4 pkt."
+      "Bonus za dokladna roznice bramek (handicap): +1 pkt - tylko gdy mecz NIE byl remisem.",
+      "Remis: poprawnie wytypowany remis = 3 pkt, dokladny wynik remisu = 5 pkt (handicap nie obowiazuje).",
+      "Bonus sumuje sie z rezultatem, wiec przy meczu rozstrzygnietym bez dokladnego wyniku maksymalnie 4 pkt."
     ]
   },
   {
@@ -65,7 +66,7 @@ export const rulesSummary = [
     items: [
       "Dokladny wynik po 90 minutach: 5 pkt.",
       "Poprawny zwyciezca: 3 pkt.",
-      "Bonus za dokladna roznice bramek: +1 pkt (laczny wynik meczu maks 5 pkt).",
+      "Bonus za dokladna roznice bramek: +1 pkt, tylko gdy mecz nie byl remisem (laczny wynik meczu maks 5 pkt).",
       "Poprawnie wskazany mistrz: 10 pkt.",
       "Poprawnie wskazane drugie miejsce: 6 pkt.",
       "Poprawnie wskazane trzecie miejsce: 4 pkt."

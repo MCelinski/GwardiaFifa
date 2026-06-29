@@ -1,37 +1,24 @@
 import { CheckCircle2, Clock, Lock, XCircle } from "lucide-react";
 import { getLeaderboard } from "@/lib/backend/leaderboard";
 import { getPrimaryLeague } from "@/lib/backend/league";
+import { getPlayerPointsTimeline } from "@/lib/backend/player";
 import { createClient } from "@/lib/supabase/server";
 import { formatWarsawDateTime } from "@/lib/time";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { EmptyState } from "@/components/EmptyState";
 
-type PointEvent = {
-  id: string;
-  label: string;
-  points: number;
-  source_type: string;
-  created_at: string;
-};
-
 export async function PointsBreakdown({ userId }: { userId: string }) {
   const supabase = await createClient();
   const league = await getPrimaryLeague();
 
-  const [{ data: profile }, leaderboard, { data: events }] = await Promise.all([
+  const [{ data: profile }, leaderboard, timeline] = await Promise.all([
     supabase.from("profiles").select("display_name, avatar_initials").eq("id", userId).maybeSingle(),
     getLeaderboard(league?.id),
-    supabase
-      .from("points_events")
-      .select("id, label, points, source_type, created_at")
-      .eq("user_id", userId)
-      .order("created_at", { ascending: false })
-      .limit(20)
+    getPlayerPointsTimeline(userId)
   ]);
 
   const standing = leaderboard.find((user) => user.id === userId);
-  const pointEvents = (events ?? []) as PointEvent[];
 
   if (!profile && !standing) {
     return <EmptyState title="Brak danych gracza." detail="Ten uzytkownik nie ma jeszcze profilu w lidze." />;
@@ -61,22 +48,25 @@ export async function PointsBreakdown({ userId }: { userId: string }) {
 
       <Card>
         <CardHeader>
-          <CardTitle>Points events timeline</CardTitle>
+          <CardTitle>Historia zdobytych punktów</CardTitle>
+          <p className="text-sm text-muted-foreground">Każdy oceniony typ — mecze, tabele grup i podium — od najnowszego.</p>
         </CardHeader>
         <CardContent className="space-y-3">
-          {pointEvents.length ? (
-            pointEvents.map((event) => (
+          {timeline.length ? (
+            timeline.map((event) => (
               <div key={event.id} className="flex items-start gap-3 rounded-md border border-white/8 bg-black/20 p-3">
                 <EventIcon points={event.points} />
                 <div className="min-w-0 flex-1">
-                  <p className="font-semibold">{event.label}</p>
-                  <p className="mt-1 text-xs text-muted-foreground">{formatWarsawDateTime(event.created_at)} · {event.source_type}</p>
+                  <p className="truncate font-semibold">{event.label}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">{formatWarsawDateTime(event.at)} · {event.category}</p>
                 </div>
-                <span className="font-bold text-gold">+{event.points}</span>
+                <span className={`shrink-0 font-bold ${event.points > 0 ? "text-gold" : "text-muted-foreground"}`}>
+                  {event.points > 0 ? `+${event.points}` : "0"}
+                </span>
               </div>
             ))
           ) : (
-            <EmptyState title="Brak zdarzen punktowych." detail="Punkty pojawia sie po rozegraniu i synchronizacji meczow." />
+            <EmptyState title="Brak zdobytych punktów." detail="Punkty pojawią się po rozegraniu i ocenieniu pierwszych typów." />
           )}
         </CardContent>
       </Card>

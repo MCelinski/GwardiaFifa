@@ -69,6 +69,9 @@ export async function getDashboardData(): Promise<DashboardData> {
   const missingPredictions = (upcomingFixtures ?? [])
     .filter((fixture) => !predictionFixtureIds.has(fixture.id))
     .filter((fixture) => new Date(fixture.starts_at).getTime() - MATCH_LOCK_MINUTES * 60 * 1000 > now.getTime())
+    // Skip knockout fixtures whose bracket is still undecided — you can't type a
+    // [TBD] vs [TBD] match, so it shouldn't appear as a "missing" pick.
+    .filter((fixture) => hasKnownTeams(fixture))
     .slice(0, 4)
     .map((fixture) => fromDbFixture(fixture, predictionByFixture.get(fixture.id), now));
 
@@ -138,6 +141,14 @@ function emptyDashboard(): DashboardData {
     leaderboard: [],
     draftGroupsCount: 12
   };
+}
+
+// True once both teams of a fixture are real (not a placeholder bracket slot).
+// Group fixtures always qualify; knockout fixtures only after the bracket fills.
+function hasKnownTeams(fixture: any): boolean {
+  const teamA = Array.isArray(fixture.team_a) ? fixture.team_a[0] : fixture.team_a;
+  const teamB = Array.isArray(fixture.team_b) ? fixture.team_b[0] : fixture.team_b;
+  return Boolean(teamA?.name && teamB?.name);
 }
 
 function fromDbFixture(

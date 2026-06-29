@@ -3,7 +3,7 @@ import { scoreGroupOrder } from "@/lib/backend/scoring";
 import { GROUP_STANDINGS_DEADLINE_LABEL, MATCH_LOCK_MINUTES } from "@/lib/rules";
 import { createClient } from "@/lib/supabase/server";
 import { formatWarsawDateTime, getWarsawDateKey } from "@/lib/time";
-import type { GroupStandingPrediction, GroupTable, GroupTableRow, KnockoutMatch, Match, PredictionStatus, Team } from "@/lib/types";
+import type { BettableMatch, GroupStandingPrediction, GroupTable, GroupTableRow, PredictionStatus, Team } from "@/lib/types";
 
 // Number of best third-placed teams that advance from the group stage.
 const BEST_THIRD_QUALIFIERS = 8;
@@ -88,7 +88,12 @@ export async function getExactHits(): Promise<{ userId: string | null; hits: Exa
   return { userId, hits };
 }
 
-export async function getGroupStageMatches(opts?: { upcomingOnly?: boolean }): Promise<Match[]> {
+// Every match the player can bet on, across both the group and knockout stages,
+// in chronological order. This powers the single "Mecze" tab so match-by-match
+// betting lives in one place for the whole tournament. Knockout fixtures whose
+// bracket is not yet decided (no real teams) are omitted — they can't be typed
+// until both teams are known.
+export async function getBettableMatches(opts?: { upcomingOnly?: boolean }): Promise<BettableMatch[]> {
   const { supabase, userId, leagueId } = await getSessionContext();
   if (!userId || !leagueId) return [];
 
@@ -96,10 +101,10 @@ export async function getGroupStageMatches(opts?: { upcomingOnly?: boolean }): P
     supabase
       .from("fixtures")
       .select(
-        "id, starts_at, status, group_code, placeholder_a, placeholder_b, team_a:team_a_id(name, flag_code), team_b:team_b_id(name, flag_code), score_a, score_b"
+        "id, starts_at, status, stage, round, group_code, placeholder_a, placeholder_b, team_a:team_a_id(name, flag_code), team_b:team_b_id(name, flag_code), score_a, score_b"
       )
       .eq("league_id", leagueId)
-      .eq("stage", "group")
+      .in("stage", ["group", "knockout"])
       .order("starts_at", { ascending: true }),
     supabase.from("match_predictions").select("fixture_id, score_a, score_b").eq("user_id", userId)
   ]);
@@ -116,33 +121,48 @@ export async function getGroupStageMatches(opts?: { upcomingOnly?: boolean }): P
     ? (fixtures ?? []).filter((fixture) => getWarsawDateKey(new Date(fixture.starts_at)) >= todayKey)
     : fixtures ?? [];
 
-  return visibleFixtures.map((fixture) => {
-    const startsAt = new Date(fixture.starts_at);
-    const lockAt = new Date(startsAt.getTime() - MATCH_LOCK_MINUTES * 60 * 1000);
-    const teamA = pickTeam(fixture.team_a);
-    const teamB = pickTeam(fixture.team_b);
-    const prediction = predictionByFixture.get(fixture.id);
-    const status = resolveMatchStatus(fixture.status, lockAt, now, Boolean(prediction));
-    const result =
-      fixture.score_a !== null && fixture.score_b !== null
-        ? ([fixture.score_a, fixture.score_b] as [number, number])
-        : undefined;
+  return visibleFixtures
+    .map((fixture) => {
+      const startsAt = new Date(fixture.starts_at);
+      const lockAt = new Date(startsAt.getTime() - MATCH_LOCK_MINUTES * 60 * 1000);
+      const teamA = pickTeam(fixture.team_a);
+      const teamB = pickTeam(fixture.team_b);
+      const prediction = predictionByFixture.get(fixture.id);
+      const status = resolveMatchStatus(fixture.status, lockAt, now, Boolean(prediction));
+      const result =
+        fixture.score_a !== null && fixture.score_b !== null
+          ? ([fixture.score_a, fixture.score_b] as [number, number])
+          : undefined;
+      const isKnockout = fixture.stage === "knockout";
+      const knownTeams = Boolean(teamA?.name && teamB?.name);
+      const contextLabel = isKnockout
+        ? knockoutRoundLabel(fixture.round)
+        : fixture.group_code
+          ? `Grupa ${fixture.group_code}`
+          : "Faza grupowa";
 
-    return {
-      id: fixture.id,
-      group: fixture.group_code ?? undefined,
-      date: formatWarsawDateTime(startsAt),
-      deadline: formatWarsawDateTime(lockAt),
-      teamA: teamA?.name ?? fixture.placeholder_a ?? "TBD",
-      teamB: teamB?.name ?? fixture.placeholder_b ?? "TBD",
-      flagA: teamA?.flag_code ?? "A",
-      flagB: teamB?.flag_code ?? "B",
-      status,
-      prediction: prediction ? [prediction.score_a, prediction.score_b] : undefined,
-      result,
-      friendsVisible: areFriendsPicksVisible(fixture.status, startsAt, now)
-    } satisfies Match;
-  });
+      return {
+        // Knockout fixtures with an undecided bracket can't be predicted yet.
+        bettable: isKnockout ? knownTeams : true,
+        match: {
+          id: fixture.id,
+          stage: isKnockout ? "knockout" : "group",
+          contextLabel,
+          date: formatWarsawDateTime(startsAt),
+          deadline: formatWarsawDateTime(lockAt),
+          teamA: teamA?.name ?? fixture.placeholder_a ?? "TBD",
+          teamB: teamB?.name ?? fixture.placeholder_b ?? "TBD",
+          flagA: teamA?.flag_code ?? "A",
+          flagB: teamB?.flag_code ?? "B",
+          status,
+          prediction: prediction ? [prediction.score_a, prediction.score_b] : undefined,
+          result,
+          friendsVisible: areFriendsPicksVisible(fixture.status, startsAt, now)
+        } satisfies BettableMatch
+      };
+    })
+    .filter((entry) => entry.bettable)
+    .map((entry) => entry.match);
 }
 
 export async function getGroupStandings(): Promise<GroupStandingPrediction[]> {
@@ -367,65 +387,4 @@ export async function getGroupTables(): Promise<GroupTable[]> {
       simulatedPoints
     } satisfies GroupTable;
   });
-}
-
-export async function getKnockoutMatches(opts?: { upcomingOnly?: boolean }): Promise<KnockoutMatch[]> {
-  const { supabase, userId, leagueId } = await getSessionContext();
-  if (!userId || !leagueId) return [];
-
-  const [{ data: fixtures }, { data: predictions }] = await Promise.all([
-    supabase
-      .from("fixtures")
-      .select(
-        "id, starts_at, status, round, placeholder_a, placeholder_b, score_a, score_b, team_a:team_a_id(name, flag_code), team_b:team_b_id(name, flag_code)"
-      )
-      .eq("league_id", leagueId)
-      .eq("stage", "knockout")
-      .order("starts_at", { ascending: true }),
-    supabase.from("match_predictions").select("fixture_id, score_a, score_b").eq("user_id", userId)
-  ]);
-
-  const predictionByFixture = new Map((predictions ?? []).map((row) => [row.fixture_id, row]));
-  const now = new Date();
-
-  // Same day-based filter as the group stage: hide knockout days before today,
-  // keep today and future. Played matches live in the history modal.
-  const todayKey = getWarsawDateKey(now);
-  const visibleFixtures = opts?.upcomingOnly
-    ? (fixtures ?? []).filter((fixture) => getWarsawDateKey(new Date(fixture.starts_at)) >= todayKey)
-    : fixtures ?? [];
-
-  return visibleFixtures
-    .map((fixture) => {
-      const startsAt = new Date(fixture.starts_at);
-      const lockAt = new Date(startsAt.getTime() - MATCH_LOCK_MINUTES * 60 * 1000);
-      const teamA = pickTeam(fixture.team_a);
-      const teamB = pickTeam(fixture.team_b);
-      const prediction = predictionByFixture.get(fixture.id);
-      const status = resolveMatchStatus(fixture.status, lockAt, now, Boolean(prediction));
-      const result =
-        fixture.score_a !== null && fixture.score_b !== null
-          ? ([fixture.score_a, fixture.score_b] as [number, number])
-          : undefined;
-
-      return {
-        knownTeams: Boolean(teamA?.name && teamB?.name),
-        match: {
-          id: fixture.id,
-          round: knockoutRoundLabel(fixture.round),
-          date: formatWarsawDateTime(startsAt),
-          teamA: teamA?.name ?? fixture.placeholder_a ?? "TBD",
-          teamB: teamB?.name ?? fixture.placeholder_b ?? "TBD",
-          flagA: teamA?.flag_code ?? "A",
-          flagB: teamB?.flag_code ?? "B",
-          status,
-          prediction: prediction ? ([prediction.score_a, prediction.score_b] as [number, number]) : undefined,
-          result,
-          friendsVisible: areFriendsPicksVisible(fixture.status, startsAt, now)
-        } satisfies KnockoutMatch
-      };
-    })
-    // Only matches whose teams are actually decided can be predicted — no TBD bracket.
-    .filter((entry) => entry.knownTeams)
-    .map((entry) => entry.match);
 }

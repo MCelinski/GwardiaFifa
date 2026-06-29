@@ -1,82 +1,39 @@
-import { Info } from "lucide-react";
+import { CalendarClock } from "lucide-react";
+import Link from "next/link";
 import { AppShell } from "@/components/AppShell";
-import { EmptyState } from "@/components/EmptyState";
-import { FriendsPredictionsModal } from "@/components/FriendsPredictionsModal";
-import { MatchHistoryModal } from "@/components/MatchHistoryModal";
-import { MatchScoreCard } from "@/components/MatchScoreCard";
 import { TournamentPicksCard } from "@/components/TournamentPicksCard";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { getTournamentPredictionState } from "@/lib/backend/tournament";
-import { getKnockoutMatches } from "@/lib/backend/predictions-view";
 
 export default async function KnockoutPage() {
-  const [tournamentPickState, knockoutMatches] = await Promise.all([
-    getTournamentPredictionState(),
-    getKnockoutMatches({ upcomingOnly: true })
-  ]);
-
-  const lockedStatuses = ["locked", "live", "scored"];
+  const tournamentPickState = await getTournamentPredictionState();
 
   return (
     <AppShell>
       <div className="space-y-5">
         <div>
           <p className="text-sm font-semibold uppercase text-gold">Faza pucharowa</p>
-          <h1 className="mt-2 text-3xl font-black">Podium i mecze pucharowe</h1>
+          <h1 className="mt-2 text-3xl font-black">Typy podium turnieju</h1>
           <p className="mt-2 max-w-2xl text-muted-foreground">
-            Przed turniejem typujesz tylko podium. Mecze pucharowe pojawiają się do typowania dopiero wtedy,
-            gdy znane są obie drużyny.
+            Tutaj typujesz podium całego turnieju — mistrza, wicemistrza i trzecie miejsce. Pojedyncze mecze pucharowe
+            obstawiasz w zakładce „Mecze”, gdy znane są obie drużyny.
           </p>
         </div>
 
         <TournamentPicksCard state={tournamentPickState} />
 
         <Card>
-          <CardHeader>
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <CardTitle>Mecze pucharowe do obstawienia</CardTitle>
-              <MatchHistoryModal />
-            </div>
-            <p className="text-sm text-muted-foreground">
-              Dzisiejsze i nadchodzące mecze ze znanymi drużynami. Każdy typ zamyka się 10 minut przed pierwszym gwizdkiem.
-            </p>
-          </CardHeader>
-          <CardContent>
-            {knockoutMatches.length ? (
-              <div className="grid gap-3 xl:grid-cols-2">
-                {knockoutMatches.map((match) => (
-                  <MatchScoreCard
-                    key={match.id}
-                    fixtureId={match.id}
-                    teamA={match.teamA}
-                    teamB={match.teamB}
-                    flagA={match.flagA}
-                    flagB={match.flagB}
-                    contextLabel={match.round}
-                    dateLabel={match.date}
-                    locked={lockedStatuses.includes(match.status)}
-                    isLive={match.status === "live"}
-                    prediction={match.prediction}
-                    result={match.result}
-                  />
-                ))}
-              </div>
-            ) : (
-              <EmptyState
-                title="Brak meczów pucharowych do obstawienia."
-                detail="Drużyny w fazie pucharowej są znane dopiero po rozstrzygnięciu grup. Nadchodzące mecze pojawią się tutaj automatycznie, a rozegrane znajdziesz w „Historii meczów” u góry."
-              />
-            )}
-          </CardContent>
-        </Card>
-
-        <Card>
           <CardContent className="flex flex-wrap items-center justify-between gap-3 p-5">
             <p className="flex items-center gap-2 text-sm text-muted-foreground">
-              <Info className="h-4 w-4 text-gold" />
-              Typy znajomych odsłaniają się po rozpoczęciu danego meczu.
+              <CalendarClock className="h-4 w-4 text-gold" />
+              Mecze fazy pucharowej obstawisz w zakładce „Mecze”.
             </p>
-            <FriendsPredictionsModal locked={false} label="Typy znajomych" />
+            <Link
+              href="/predictions/group-matches"
+              className="rounded-md border border-white/10 bg-white/8 px-3 py-2 text-sm font-medium text-foam transition hover:bg-white/12"
+            >
+              Przejdź do meczów
+            </Link>
           </CardContent>
         </Card>
       </div>

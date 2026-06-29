@@ -32,9 +32,14 @@ export type User = {
   };
 };
 
-export type Match = {
+// A single match the player can bet on, regardless of stage. The "Mecze" tab
+// renders these for both the group stage and the knockout stage so all
+// match-by-match betting lives in one place. `contextLabel` is the human round
+// label ("Grupa A" or "1/8 finału").
+export type BettableMatch = {
   id: string;
-  group?: string;
+  stage: "group" | "knockout";
+  contextLabel: string;
   date: string;
   deadline: string;
   teamA: string;
@@ -82,19 +87,4 @@ export type GroupTable = {
   prediction: { teamId: string; name: string; flag: string }[] | null;
   // Points this prediction would earn if the group stage ended right now.
   simulatedPoints: number | null;
-};
-
-export type KnockoutMatch = {
-  id: string;
-  round: string;
-  date: string;
-  teamA: string;
-  teamB: string;
-  flagA?: string;
-  flagB?: string;
-  status: PredictionStatus;
-  prediction?: [number, number];
-  result?: [number, number];
-  winner?: string;
-  friendsVisible: boolean;
 };

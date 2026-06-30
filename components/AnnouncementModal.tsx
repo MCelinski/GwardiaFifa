@@ -10,17 +10,20 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from "@/compone
 // not acknowledged this exact id sees it once. Seen ids are stored per user in
 // localStorage (mirrors HitCelebration), so it shows once per browser and the
 // 60s auto-refresh does not re-trigger it.
-const NOTICE_ID = "2026-06-22-draw-no-handicap";
+const NOTICE_ID = "2026-06-30-knockout-penalty-score";
 
-// Points removed from each player when the draw handicap bonus was dropped
-// (0008 -> 0009). Snapshot from scripts/draw-handicap-impact.mjs, 2026-06-22.
-const DRAW_LOSSES = [
-  { name: "Dymek", pts: 2 },
-  { name: "Michu Jonas Tornado", pts: 2 },
-  { name: "Franek", pts: 1 },
-  { name: "Marcin", pts: 1 },
-  { name: "Doomaoo", pts: 1 },
-  { name: "Niki", pts: 1 },
+// Holandia–Maroko 1:1 (karne 2:3 dla Maroka) wpadło do apki jako 3:4, bo API
+// dokleja gole z karnych do wyniku regulaminowego. Po korekcie wynik to 1:1,
+// a punkty przeliczone. Snapshot z 2026-06-30.
+const PENALTY_GAINS = [
+  { name: "Franek", bet: "1:1", pts: 5 },
+  { name: "Marcin", bet: "1:1", pts: 5 },
+  { name: "jonek", bet: "1:1", pts: 5 },
+  { name: "Niki", bet: "2:2", pts: 3 },
+];
+const PENALTY_LOSSES = [
+  { name: "Doomaoo", bet: "1:2", pts: 4 },
+  { name: "Rumcajs z Gwardii", bet: "1:3", pts: 3 },
 ];
 
 function readSeen(key: string): string[] {
@@ -58,47 +61,64 @@ export function AnnouncementModal({ userId }: { userId: string }) {
     >
       <DialogContent className="max-w-lg text-center">
         <Megaphone className="mx-auto h-9 w-9 text-gold" />
-        <DialogTitle className="mt-3 text-2xl font-black">Zmiana punktacji: remis 🤝</DialogTitle>
+        <DialogTitle className="mt-3 text-2xl font-black">Korekta wyniku: karne ⚽</DialogTitle>
         <DialogDescription className="mx-auto mt-2 max-w-md text-sm text-muted-foreground">
-          Remis ma różnicę bramek 0, więc handicap leciał za niego za darmo. Koniec promocji — od teraz
-          trafiony remis to czysty rezultat. Ranking przeliczyliśmy wstecz.
+          W fazie pucharowej mecze rozstrzygnięte po karnych zaciągały się ze źle policzonym wynikiem — apka
+          doklejała gole z rzutów karnych do wyniku z boiska. Naprawione: liczy się wynik regulaminowy, a karne
+          decydują tylko o awansie. Ranking przeliczyliśmy wstecz.
         </DialogDescription>
 
         <div className="mt-4 space-y-2 rounded-lg border border-white/10 bg-white/5 p-4 text-left text-sm">
           <p className="flex items-center justify-between gap-3">
-            <span>Dokładny wynik (też remisu)</span>
-            <span className="shrink-0 font-bold text-gold">5 pkt</span>
+            <span className="font-semibold">Holandia 🇳🇱 vs Maroko 🇲🇦</span>
+            <span className="shrink-0 font-bold">
+              <span className="text-red-400 line-through">3:4</span> → <span className="text-gold">1:1</span>
+            </span>
           </p>
-          <p className="flex items-center justify-between gap-3">
-            <span>Poprawny rezultat (zwycięzca lub remis)</span>
-            <span className="shrink-0 font-bold">3 pkt</span>
+          <p className="text-xs text-muted-foreground">
+            Po 90 min było 1:1, karne 2:3 dla Maroka. Apka pokazywała 3:4, więc punkty leciały od złego wyniku.
           </p>
-          <p className="flex items-center justify-between gap-3">
-            <span>Handicap (różnica bramek) — tylko gdy NIE remis</span>
-            <span className="shrink-0 font-bold">+1 pkt</span>
+          <p className="flex items-center justify-between gap-3 border-t border-white/10 pt-2">
+            <span className="font-semibold">Niemcy 🇩🇪 vs Paragwaj 🇵🇾</span>
+            <span className="shrink-0 font-bold">
+              <span className="text-red-400 line-through">4:5</span> → <span className="text-gold">1:1</span>
+            </span>
           </p>
-          <p className="border-t border-white/10 pt-2 text-xs text-muted-foreground">
-            Trafiony remis bez dokładnego wyniku = 3 pkt (kiedyś 4). Reszta meczów bez zmian.
+          <p className="text-xs text-muted-foreground">
+            Też poprawione (1:1, karne 3:4) — ale tu wynik nikomu nie zmienił punktów.
           </p>
         </div>
 
         <div className="mt-4 rounded-lg border border-white/10 bg-white/5 p-4 text-left text-sm">
-          <p className="mb-2 font-bold">Lista poszkodowanych 🪦</p>
+          <p className="mb-2 font-bold">Zyskują po korekcie 🎉 (Holandia–Maroko)</p>
           <ul className="space-y-1">
-            {DRAW_LOSSES.map((r) => (
+            {PENALTY_GAINS.map((r) => (
               <li key={r.name} className="flex items-center justify-between gap-3">
-                <span>{r.name}</span>
+                <span>
+                  {r.name} <span className="text-xs text-muted-foreground">({r.bet})</span>
+                </span>
+                <span className="shrink-0 font-bold text-emerald-400">+{r.pts} pkt</span>
+              </li>
+            ))}
+          </ul>
+          <p className="mb-2 mt-3 border-t border-white/10 pt-3 font-bold">Tracą błędne punkty 🪦</p>
+          <ul className="space-y-1">
+            {PENALTY_LOSSES.map((r) => (
+              <li key={r.name} className="flex items-center justify-between gap-3">
+                <span>
+                  {r.name} <span className="text-xs text-muted-foreground">({r.bet})</span>
+                </span>
                 <span className="shrink-0 font-bold text-red-400">−{r.pts} pkt</span>
               </li>
             ))}
           </ul>
           <p className="mt-2 border-t border-white/10 pt-2 text-xs text-muted-foreground">
-            Tracę najwięcej, więc reforma w pełni bezstronna. 🫡🍺
+            Trafiony dokładny wynik 1:1 = 5 pkt, trafiony remis = 3 pkt. Reszta typów bez zmian.
           </p>
         </div>
 
         <div className="mt-5">
-          <Button onClick={dismiss}>Boli, ale gram dalej 🍺</Button>
+          <Button onClick={dismiss}>Gram dalej 🍺</Button>
         </div>
       </DialogContent>
     </Dialog>

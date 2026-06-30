@@ -21,12 +21,49 @@ type FootballDataMatch = {
   awayTeam: FootballDataTeam;
   score: {
     winner?: "HOME_TEAM" | "AWAY_TEAM" | "DRAW" | null;
-    fullTime?: {
-      home: number | null;
-      away: number | null;
-    };
+    duration?: "REGULAR" | "EXTRA_TIME" | "PENALTY_SHOOTOUT" | string | null;
+    fullTime?: FootballDataScoreLine;
+    regularTime?: FootballDataScoreLine | null;
+    extraTime?: FootballDataScoreLine | null;
+    penalties?: FootballDataScoreLine | null;
   };
 };
+
+type FootballDataScoreLine = {
+  home: number | null;
+  away: number | null;
+};
+
+// football-data.org reports `fullTime` for penalty-shootout matches as
+// regular + extra + penalty goals (e.g. a 1:1 that ends 2:3 on penalties comes
+// back as fullTime 3:4). Players bet on the on-the-pitch result, and the
+// winner is carried separately in `score.winner`, so we strip the penalty
+// goals back out and store the score at the end of play (regular + extra time).
+function resolvePlayedScore(score: FootballDataMatch["score"]): FootballDataScoreLine {
+  if (score.duration === "PENALTY_SHOOTOUT") {
+    const regular = score.regularTime;
+    const extra = score.extraTime;
+    if (regular && regular.home != null && regular.away != null) {
+      return {
+        home: regular.home + (extra?.home ?? 0),
+        away: regular.away + (extra?.away ?? 0)
+      };
+    }
+    // Fall back to subtracting the shootout from fullTime if the breakdown is missing.
+    const full = score.fullTime;
+    const penalties = score.penalties;
+    if (full && full.home != null && full.away != null && penalties) {
+      return {
+        home: full.home - (penalties.home ?? 0),
+        away: full.away - (penalties.away ?? 0)
+      };
+    }
+  }
+  return {
+    home: score.fullTime?.home ?? null,
+    away: score.fullTime?.away ?? null
+  };
+}
 
 type FootballDataResponse = {
   filters?: Record<string, unknown>;
@@ -149,6 +186,7 @@ export async function syncFootballDataMatches(options: { dateFrom?: string; date
   const fixtures = payload.matches.map((match) => {
     const groupCode = normalizeGroup(match.group);
     const stage = inferStage(match.stage, groupCode);
+    const playedScore = resolvePlayedScore(match.score);
 
     return {
       external_id: `football-data:${match.id}`,
@@ -162,8 +200,8 @@ export async function syncFootballDataMatches(options: { dateFrom?: string; date
       placeholder_b: match.awayTeam.name ?? "TBD",
       starts_at: match.utcDate,
       status: statusMap[match.status],
-      score_a: match.score.fullTime?.home ?? null,
-      score_b: match.score.fullTime?.away ?? null,
+      score_a: playedScore.home,
+      score_b: playedScore.away,
       winner_team_id:
         match.score.winner === "HOME_TEAM" && match.homeTeam.name
           ? teamByName.get(match.homeTeam.name) ?? null

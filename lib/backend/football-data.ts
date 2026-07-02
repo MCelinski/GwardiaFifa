@@ -34,28 +34,29 @@ type FootballDataScoreLine = {
   away: number | null;
 };
 
-// football-data.org reports `fullTime` for penalty-shootout matches as
-// regular + extra + penalty goals (e.g. a 1:1 that ends 2:3 on penalties comes
-// back as fullTime 3:4). Players bet on the on-the-pitch result, and the
-// winner is carried separately in `score.winner`, so we strip the penalty
-// goals back out and store the score at the end of play (regular + extra time).
+// The cup rules score the result "po 90 minutach" (after 90 minutes): extra
+// time and penalty shootouts never count toward the stored score. But
+// football-data.org reports `fullTime` cumulatively — for a match that went past
+// regulation it includes the extra-time goals, and for a shootout it also adds
+// the penalty goals (e.g. a 1:1 decided 2:3 on penalties comes back as fullTime
+// 3:4). So for any match whose duration is not REGULAR we store `regularTime` —
+// the score at the end of 90 minutes. The knockout winner is carried separately
+// in `score.winner` and is not derived from this score.
 function resolvePlayedScore(score: FootballDataMatch["score"]): FootballDataScoreLine {
-  if (score.duration === "PENALTY_SHOOTOUT") {
+  if (score.duration && score.duration !== "REGULAR") {
     const regular = score.regularTime;
-    const extra = score.extraTime;
     if (regular && regular.home != null && regular.away != null) {
-      return {
-        home: regular.home + (extra?.home ?? 0),
-        away: regular.away + (extra?.away ?? 0)
-      };
+      return { home: regular.home, away: regular.away };
     }
-    // Fall back to subtracting the shootout from fullTime if the breakdown is missing.
+    // Fall back to subtracting extra-time and shootout goals from fullTime if the
+    // breakdown is missing.
     const full = score.fullTime;
-    const penalties = score.penalties;
-    if (full && full.home != null && full.away != null && penalties) {
+    if (full && full.home != null && full.away != null) {
+      const extra = score.extraTime;
+      const penalties = score.penalties;
       return {
-        home: full.home - (penalties.home ?? 0),
-        away: full.away - (penalties.away ?? 0)
+        home: full.home - (extra?.home ?? 0) - (penalties?.home ?? 0),
+        away: full.away - (extra?.away ?? 0) - (penalties?.away ?? 0)
       };
     }
   }

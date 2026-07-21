@@ -26,6 +26,7 @@ const baseNavItems = [
   { href: "/predictions/groups", label: "Grupy" },
   { href: "/predictions/knockout", label: "Puchar" },
   { href: "/leaderboard", label: "Tabela" },
+  { href: "/wyniki", label: "Wyniki" },
   { href: "/friends", label: "Typy znajomych" },
   { href: "/rules", label: "Regulamin" }
 ];

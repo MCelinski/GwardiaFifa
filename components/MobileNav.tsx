@@ -2,7 +2,7 @@
 
 import Link, { useLinkStatus } from "next/link";
 import { usePathname } from "next/navigation";
-import { BarChart3, CalendarClock, FileText, Home, Loader2, Shield, Trophy, Users, type LucideIcon } from "lucide-react";
+import { BarChart3, CalendarClock, FileText, Home, Loader2, PartyPopper, Shield, Trophy, Users, type LucideIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { NavProgressBar } from "@/components/NavProgressBar";
 
@@ -12,6 +12,7 @@ const items = [
   { href: "/predictions/groups", label: "Grupy", icon: Shield },
   { href: "/predictions/knockout", label: "Puchar", icon: Trophy },
   { href: "/leaderboard", label: "Tabela", icon: BarChart3 },
+  { href: "/wyniki", label: "Wyniki", icon: PartyPopper },
   { href: "/friends", label: "Znajomi", icon: Users },
   { href: "/rules", label: "Zasady", icon: FileText }
 ];
@@ -28,7 +29,7 @@ export function MobileNav() {
 
   return (
     <nav className="fixed inset-x-0 bottom-0 z-40 border-t border-white/10 bg-ink/92 px-2 py-2 backdrop-blur-xl lg:hidden">
-      <div className="grid grid-cols-7 gap-0.5">
+      <div className="grid grid-cols-8 gap-0.5">
         {items.map((item) => {
           const active = pathname === item.href;
 

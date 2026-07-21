@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { CalendarClock, ListChecks } from "lucide-react";
+import { CalendarClock, ListChecks, Trophy } from "lucide-react";
 import { AppShell } from "@/components/AppShell";
 import { EmptyState } from "@/components/EmptyState";
 import { Flag } from "@/components/Flag";
@@ -17,12 +17,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { getDashboardData } from "@/lib/backend/dashboard";
 import { getExactHits } from "@/lib/backend/predictions-view";
 import { getTodaysBettableMatches } from "@/lib/backend/fixtures";
+import { getResultsData } from "@/lib/backend/results";
 
 export default async function DashboardPage() {
-  const [todaysMatches, dashboard, exactHits] = await Promise.all([
+  const [todaysMatches, dashboard, exactHits, results] = await Promise.all([
     getTodaysBettableMatches(),
     getDashboardData(),
-    getExactHits()
+    getExactHits(),
+    getResultsData()
   ]);
 
   return (
@@ -40,6 +42,33 @@ export default async function DashboardPage() {
           </div>
           <LeagueCodeCard />
         </div>
+
+        {results.isTournamentOver ? (
+          <Card className="border-gold/30 bg-gradient-to-r from-gold/15 to-transparent">
+            <CardContent className="flex flex-col gap-4 p-5 sm:flex-row sm:items-center sm:justify-between">
+              <div className="flex items-center gap-4">
+                <div className="grid h-12 w-12 shrink-0 place-items-center rounded-full border border-gold/40 bg-gold/15 text-2xl">
+                  🏆
+                </div>
+                <div className="min-w-0">
+                  <p className="text-sm font-semibold uppercase text-gold">Mundial dobiegł końca</p>
+                  <h2 className="text-xl font-black">Wyniki turnieju są gotowe</h2>
+                  {results.podium.length >= 3 ? (
+                    <p className="mt-1 truncate text-sm text-muted-foreground">
+                      🥇 {results.podium[0].name} · 🥈 {results.podium[1].name} · 🥉 {results.podium[2].name}
+                    </p>
+                  ) : null}
+                </div>
+              </div>
+              <Button asChild>
+                <Link href="/wyniki">
+                  <Trophy className="h-4 w-4" />
+                  Zobacz wyniki
+                </Link>
+              </Button>
+            </CardContent>
+          </Card>
+        ) : null}
 
         <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-6">
           {dashboard.stats.map((stat) => (
